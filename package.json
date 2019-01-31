@@ -1,0 +1,54 @@
+{
+  "name": "2-dimensional-statistics",
+  "version": "0.1.0",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/schottilol/2-dimensional-samples.git"
+  },
+  "keywords": [
+    "react",
+    "dhbw",
+    "statistics"
+  ],
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.{js,jsx}": [
+      "eslint --fix",
+      "prettier --write",
+      "git add"
+    ]
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "validate": "eslint --fix ./src/ && prettier --write ./**/*.js",
+    "build": "npm run validate && react-scripts build",
+    "test": "react-scripts test"
+  },
+  "dependencies": {
+    "classnames": "^2.2.6",
+    "nes.css": "^1.0.0",
+    "normalize.css": "^8.0.1",
+    "react": "^16.7.0",
+    "react-dom": "^16.7.0",
+    "react-scripts": "2.1.3"
+  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ],
+  "devDependencies": {
+    "husky": "^1.3.1",
+    "lint-staged": "^8.1.1",
+    "prettier": "^1.16.3"
+  }
+}
