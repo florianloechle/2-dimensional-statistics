@@ -6,7 +6,11 @@ class StatisticsApp extends React.Component {
   render() {
     return (
       <div>
-        <h1>Hello World</h1>
+        <form>
+          <textarea />
+          <button type="submit" />
+        </form>
+        <h1>Hi</h1>
       </div>
     );
   }
