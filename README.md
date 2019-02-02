@@ -1,5 +1,10 @@
 # 2-Dimensional-Statistics
 
+<img src="https://www.berufsziel-steuerberater-wirtschaftspruefer.de/files/WP-StB/img/Lehrstuhl/DHBW_Logo.jpg" width="250"/>
+
+A semester project by the stundents of the business informatics (WI16).  
+The goal is to create simple WebApp for basic statistical math.
+
 ## Installation 
 
 ```
