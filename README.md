@@ -1,5 +1,7 @@
 # 2-Dimensional-Statistics
 
+![](https://img.shields.io/travis/schottilol/2-dimensional-samples/master.svg?style=flat)
+
 <img src="https://www.berufsziel-steuerberater-wirtschaftspruefer.de/files/WP-StB/img/Lehrstuhl/DHBW_Logo.jpg" width="250"/>
 
 A semester project by the stundents of the business informatics (WI16).  
