@@ -9,6 +9,26 @@ describe('The Statistics class', () => {
     [79, 70, 75, 100, 75, 60, 78, 92, 70, 71],
   ];
 
+  describe('The public API', () => {
+    it('exposes the right static functions', () => {
+      expect(Statistics.average).toBeDefined();
+      expect(Statistics.mean).toBeDefined();
+      expect(Statistics.variance).toBeDefined();
+    });
+
+    it('exposes the right property getters', () => {
+      const sampleData = samples.reduce(
+        (acc, array) => [...acc, [array[0], array[1]]],
+        []
+      );
+
+      const stats = new Statistics(sampleData);
+
+      expect(stats.variance).toBeDefined();
+      expect(stats.mean).toBeDefined();
+    });
+  });
+
   describe('Average (mean)', () => {
     test.each`
       samples       | expected
