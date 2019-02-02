@@ -1,6 +1,13 @@
-# 2-Dimensional-Statistics
+<h1 align="center">
+  <img src="https://www.berufsziel-steuerberater-wirtschaftspruefer.de/files/WP-StB/img/Lehrstuhl/DHBW_Logo.jpg" width="250"/>
+<br>
+  2-Dimensional-Statistics
+</h1>
 
-<img src="https://www.berufsziel-steuerberater-wirtschaftspruefer.de/files/WP-StB/img/Lehrstuhl/DHBW_Logo.jpg" width="250"/>
+![](https://img.shields.io/travis/schottilol/2-dimensional-samples/master.svg?style=flat)
+![](https://img.shields.io/david/schottilol/2-dimensional-statistics.svg?style=flat)
+![](https://img.shields.io/codecov/c/schottilol/schottilol/2-dimensional-statistics.svg?colorB=red&style=flat)
+![](https://img.shields.io/github/license/schottilol/2-dimensional-samples.svg?style=flat)
 
 A semester project by the stundents of the business informatics (WI16).  
 The goal is to create simple WebApp for basic statistical math.
