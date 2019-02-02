@@ -1,6 +1,7 @@
 # 2-Dimensional-Statistics
 
 ![](https://img.shields.io/travis/schottilol/2-dimensional-samples/master.svg?style=flat)
+![](https://img.shields.io/github/license/schottilol/2-dimensional-samples.svg?style=flat)
 
 <img src="https://www.berufsziel-steuerberater-wirtschaftspruefer.de/files/WP-StB/img/Lehrstuhl/DHBW_Logo.jpg" width="250"/>
 
