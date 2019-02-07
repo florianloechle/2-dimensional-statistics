@@ -1,38 +1,50 @@
-.centerDiv{
-    position: absolute;
-    margin: auto;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    width: 150px;
-    height: 50px;
+.centerParent {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
 }
 
-.mainButton{
-    width: 120px;
+.mainButton {
+  width: 120px;
 }
 
-table, td, th {
-    border: 1px solid rgb(0, 0, 0);
-    text-align: left;
+table,
+td,
+th {
+  text-align: center;
+  background-color: lightblue;
 }
-  
+
 table {
-    position: absolute;
-    top: 10%;
-    left: 10%;
-    border-collapse: collapse;
-    width: 40%;
+  position: absolute;
+  top: 5%;
+  left: 5%;
+  border-collapse: collapse;
 }
 
-th, td {
-    padding: 10px;
-    text-align: center;
+table td {
+  width: 55px;
+  height: 40px;
 }
 
-.tdBold{
-    width: 40px;
-    font-weight: bold;
-    background-color: lightgrey;
+table input {
+  width: 55px;
+  text-align: center;
+  height: 40px;
+  line-height: 40px;
+  font-size: 25px;
+}
+
+.tdBold {
+  width: 40px;
+  font-weight: bold;
+  background-color: lightgrey;
+}
+
+.buttonAdd {
+  background-color: lightgreen;
+  font-weight: bold;
+  font-size: 25px;
+  width: 50px;
 }
