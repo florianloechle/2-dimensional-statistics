@@ -32,34 +32,54 @@ export default class ContingencyTable extends React.Component {
     });
   }
 
-  changeVal(index, event) {
-    const newX = this.state.xThead;
-    newX[index] = event.target.value;
-    this.setState({ xThead: newX });
-  }
-
   renderFirstRow() {
     const td = this.state.xThead.map((value, i) => (
       <th key={i} className="tdBold">
         <input
-          onInput={this.changeVal.bind(this, i)}
           type="number"
           value={value}
+          onInput={this.handleChangeX.bind(this, i)}
         />
       </th>
     ));
     return td;
   }
 
+  handleChangeX(index, event) {
+    const newX = this.state.xThead;
+    newX[index] = event.target.value;
+    this.setState({ xThead: newX });
+  }
+
+  handleChangeY(index, event) {
+    const newY = this.state.yThead;
+    newY[index] = event.target.value;
+    this.setState({ yThead: newY });
+  }
+
+  handleChangeXY(index1, index2, event) {
+    const newValues = this.state.values;
+    newValues[index1][index2] = event.target.value;
+    this.setState({ values: newValues });
+  }
+
   renderRest() {
     const rows = this.state.yThead.map((yThead, i) => (
       <tr key={i}>
         <td className="tdBold">
-          <input type="number" value={yThead} />
+          <input
+            type="number"
+            value={yThead}
+            onInput={this.handleChangeY.bind(this, i)}
+          />
         </td>
         {this.state.values[i].map((arrayDim2, i2) => (
           <td key={i2}>
-            <input type="number" value={arrayDim2} />
+            <input
+              type="number"
+              value={arrayDim2}
+              onInput={this.handleChangeXY.bind(this, i, i2)}
+            />
           </td>
         ))}
       </tr>
