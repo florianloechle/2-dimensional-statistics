@@ -16,7 +16,8 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "lint-staged"
+      "pre-commit": "npm run test:cov && lint-staged",
+      "pre-push": "npm run test:cov"
     }
   },
   "lint-staged": {
@@ -29,12 +30,13 @@
   "scripts": {
     "start": "react-scripts start",
     "validate": "eslint --fix ./src/ && prettier --write ./**/*.js",
-    "build": "npm run validate && react-scripts build",
-    "test": "react-scripts test"
+    "test": "react-scripts test",
+    "test:cov": "npm run test -- --coverage ",
+    "build": "react-scripts build",
+    "build:prod": "npm run validate && react-scripts build"
   },
   "dependencies": {
     "classnames": "^2.2.6",
-    "nes.css": "^1.0.0",
     "normalize.css": "^8.0.1",
     "react": "^16.7.0",
     "react-dom": "^16.7.0",
