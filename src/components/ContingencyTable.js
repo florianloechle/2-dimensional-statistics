@@ -40,7 +40,7 @@ export default class ContingencyTable extends React.Component {
     var count = 0;
     for (var yPos = 0; yPos < newValues.length; yPos++) {
       for (var xPos = 0; xPos < newValues[yPos].length; xPos++) {
-        if (this.state.values[yPos][xPos] > 0) {
+        if (newValues[yPos][xPos] > 0) {
           count += 1;
         }
       }
@@ -68,7 +68,8 @@ export default class ContingencyTable extends React.Component {
 
   handleChangeXY(index1, index2, event) {
     const oldValue = this.state.values[index1][index2];
-    const newValues = this.state.values;
+    // JSON parse to make a copy of the object instead of a reference
+    const newValues = JSON.parse(JSON.stringify(this.state.values));
 
     // leading zeroes will be removed
     const newValue = Number(parseInt(event.target.value), 10);
@@ -80,13 +81,13 @@ export default class ContingencyTable extends React.Component {
       this.calcSum() + (newValue - oldValue) <= 100
     ) {
       newValues[index1][index2] = newValue;
-      // max allowed unique points: 30
-      if (this.checkForUniqueLimit(newValues) === true) {
-        this.setState({ values: newValues });
-      }
     } else if (event.target.value === '') {
       // if value is an empty string, then set to 0
       newValues[index1][index2] = 0;
+    }
+
+    // max allowed unique points: 30
+    if (this.checkForUniqueLimit(newValues) === true) {
       this.setState({ values: newValues });
     }
   }
