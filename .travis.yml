@@ -1,3 +1,4 @@
+sudo: false
 language: node_js
 branches:
   only:
@@ -6,4 +7,6 @@ notifications:
   email: false
 node_js: '10'
 install: npm install
-script: npm run validate
+script: 
+   - npm run test
+   - npm run build 
