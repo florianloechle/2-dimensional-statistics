@@ -37,7 +37,6 @@
   },
   "dependencies": {
     "classnames": "^2.2.6",
-    "nes.css": "^1.0.0",
     "normalize.css": "^8.0.1",
     "react": "^16.7.0",
     "react-dom": "^16.7.0",
