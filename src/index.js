@@ -40,6 +40,7 @@ class StatisticsApp extends React.Component {
       return (
         <div>
           <ContingencyTable />
+          <button className="buttonNext unselectable">Weiter</button>
         </div>
       );
     }

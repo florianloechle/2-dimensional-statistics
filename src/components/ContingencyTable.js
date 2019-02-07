@@ -4,12 +4,15 @@ import React from 'react';
 
 export default class ContingencyTable extends React.Component {
   state = {
-    labelHor: 'Age',
-    labelVer: 'Income',
-    sum: 0,
-    xThead: [1, 2, 3],
-    yThead: [2, 3, 4],
-    values: [[1, 2, 3], [4, 5, 6], [7, 8, 9]],
+    xThead: [1, 2, 3, 4, 5, 6],
+    yThead: [1, 2, 3, 4, 5],
+    values: [
+      [1, 1, 1, 1, 1, 1],
+      [1, 1, 1, 1, 1, 1],
+      [1, 1, 1, 1, 1, 1],
+      [1, 1, 1, 1, 1, 1],
+      [1, 1, 1, 1, 1, 1],
+    ],
   };
 
   addHorizontal() {
@@ -18,7 +21,7 @@ export default class ContingencyTable extends React.Component {
       const newXY = this.state.values.map(a => [...a, 0]);
 
       return {
-        xThead: [...xThead, 0],
+        xThead: [...xThead, this.state.xThead.length + 1],
         values: newXY,
       };
     });
@@ -27,23 +30,28 @@ export default class ContingencyTable extends React.Component {
   addVertical() {
     this.setState(state => {
       return {
-        yThead: [...state.yThead, 0],
+        yThead: [...state.yThead, this.state.yThead.length + 1],
         values: [...state.values, new Array(state.xThead.length).fill(0)],
       };
     });
   }
 
-  renderFirstRow() {
-    const td = this.state.xThead.map((value, i) => (
-      <th key={i} className="tdBold">
-        <input
-          type="number"
-          value={value}
-          onInput={this.handleChangeX.bind(this, i)}
-        />
-      </th>
-    ));
-    return td;
+  checkForUniqueLimit(newValues) {
+    var count = 0;
+    for (var yPos = 0; yPos < newValues.length; yPos++) {
+      for (var xPos = 0; xPos < newValues[yPos].length; xPos++) {
+        if (this.state.values[yPos][xPos] > 0) {
+          count += 1;
+        }
+      }
+    }
+
+    if (count <= 30) {
+      return true;
+    } else {
+      alert('Only 30 unique points allowed!');
+      return false;
+    }
   }
 
   handleChangeX(index, event) {
@@ -59,37 +67,28 @@ export default class ContingencyTable extends React.Component {
   }
 
   handleChangeXY(index1, index2, event) {
+    const oldValue = this.state.values[index1][index2];
     const newValues = this.state.values;
-    newValues[index1][index2] = Number(event.target.value);
-    this.setState({ values: newValues });
-  }
 
-  renderRest() {
-    const rows = this.state.yThead.map((yThead, i) => (
-      <tr key={i}>
-        <td className="tdBold">
-          <input
-            type="number"
-            value={yThead}
-            onInput={this.handleChangeY.bind(this, i)}
-          />
-        </td>
-        {this.state.values[i].map((arrayDim2, i2) => (
-          <td key={i2}>
-            <input
-              type="number"
-              value={arrayDim2}
-              onInput={this.handleChangeXY.bind(this, i, i2)}
-            />
-          </td>
-        ))}
-        <td className="tdBold">
-          <input disabled type="number" value={this.calcHorSum(i)} />
-        </td>
-      </tr>
-    ));
+    // leading zeroes will be removed
+    const newValue = Number(parseInt(event.target.value), 10);
 
-    return rows;
+    // datatype integer is being forced, value must be >= 0 and new total sum <= 100
+    if (
+      Number.isInteger(newValue) === true &&
+      newValue >= 0 &&
+      this.calcSum() + (newValue - oldValue) <= 100
+    ) {
+      newValues[index1][index2] = newValue;
+      // max allowed unique points: 30
+      if (this.checkForUniqueLimit(newValues) === true) {
+        this.setState({ values: newValues });
+      }
+    } else if (event.target.value === '') {
+      // if value is an empty string, then set to 0
+      newValues[index1][index2] = 0;
+      this.setState({ values: newValues });
+    }
   }
 
   calcHorSum(index) {
@@ -102,6 +101,61 @@ export default class ContingencyTable extends React.Component {
       }
     }
     return sum;
+  }
+
+  calcSum() {
+    var sum = 0;
+    for (var yPos = 0; yPos < this.state.values.length; yPos++) {
+      for (var xPos = 0; xPos < this.state.values[yPos].length; xPos++) {
+        sum += this.state.values[yPos][xPos];
+      }
+    }
+
+    return sum;
+  }
+
+  renderFirstRow() {
+    const td = this.state.xThead.map((value, i) => (
+      <th key={i}>
+        <input
+          className="tdX"
+          type="number"
+          value={value}
+          onInput={this.handleChangeX.bind(this, i)}
+        />
+      </th>
+    ));
+    return td;
+  }
+
+  renderRest() {
+    const rows = this.state.yThead.map((yThead, i) => (
+      <tr key={i}>
+        <td>
+          <input
+            className="tdY"
+            type="number"
+            value={yThead}
+            onInput={this.handleChangeY.bind(this, i)}
+          />
+        </td>
+        {this.state.values[i].map((arrayDim2, i2) => (
+          <td key={i2}>
+            <input
+              className="tdXY"
+              type="number"
+              value={arrayDim2}
+              onInput={this.handleChangeXY.bind(this, i, i2)}
+            />
+          </td>
+        ))}
+        <td className="tdBold">
+          <input disabled value={this.calcHorSum(i)} />
+        </td>
+      </tr>
+    ));
+
+    return rows;
   }
 
   renderVerticalSums() {
@@ -120,46 +174,43 @@ export default class ContingencyTable extends React.Component {
 
     const sums = arraySums.map(val => (
       <td className="tdBold">
-        <input disabled type="number" value={val} />
+        <input disabled value={val} />
       </td>
     ));
 
     return sums;
   }
 
-  calcSum() {
-    var sum = 0;
-    for (var yPos = 0; yPos < this.state.values.length; yPos++) {
-      for (var xPos = 0; xPos < this.state.values[yPos].length; xPos++) {
-        sum += this.state.values[yPos][xPos];
-      }
-    }
-
-    return sum;
-  }
-
   render() {
     return (
-      <div>
+      <div className="centerParent">
         <table>
           <tbody>
             <tr>
-              <td className="tdBold">
-                {this.state.labelHor} / {this.state.labelVer}
-              </td>
+              <td className="tdBold" />
               {this.renderFirstRow()}
-              <td className="buttonAdd" onClick={this.addHorizontal.bind(this)}>
-                +
+              <td>
+                <div
+                  className="buttonAdd unselectable"
+                  onClick={this.addHorizontal.bind(this)}
+                >
+                  +
+                </div>
               </td>
             </tr>
             {this.renderRest()}
             <tr>
-              <td className="buttonAdd" onClick={this.addVertical.bind(this)}>
-                +
+              <td>
+                <div
+                  className="buttonAdd unselectable"
+                  onClick={this.addVertical.bind(this)}
+                >
+                  +
+                </div>
               </td>
               {this.renderVerticalSums()}
               <td className="tdBold">
-                <input disabled type="number" value={this.calcSum()} />
+                <input disabled value={this.calcSum()} />
               </td>
             </tr>
           </tbody>
