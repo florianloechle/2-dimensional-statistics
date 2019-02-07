@@ -6,6 +6,7 @@ export default class ContingencyTable extends React.Component {
   state = {
     labelHor: 'Age',
     labelVer: 'Income',
+    sum: 0,
     xThead: [1, 2, 3],
     yThead: [2, 3, 4],
     values: [[1, 2, 3], [4, 5, 6], [7, 8, 9]],
@@ -47,19 +48,19 @@ export default class ContingencyTable extends React.Component {
 
   handleChangeX(index, event) {
     const newX = this.state.xThead;
-    newX[index] = event.target.value;
+    newX[index] = Number(event.target.value);
     this.setState({ xThead: newX });
   }
 
   handleChangeY(index, event) {
     const newY = this.state.yThead;
-    newY[index] = event.target.value;
+    newY[index] = Number(event.target.value);
     this.setState({ yThead: newY });
   }
 
   handleChangeXY(index1, index2, event) {
     const newValues = this.state.values;
-    newValues[index1][index2] = event.target.value;
+    newValues[index1][index2] = Number(event.target.value);
     this.setState({ values: newValues });
   }
 
@@ -82,10 +83,59 @@ export default class ContingencyTable extends React.Component {
             />
           </td>
         ))}
+        <td className="tdBold">
+          <input disabled type="number" value={this.calcHorSum(i)} />
+        </td>
       </tr>
     ));
 
     return rows;
+  }
+
+  calcHorSum(index) {
+    var sum = 0;
+    for (var yPos = 0; yPos < this.state.values.length; yPos++) {
+      for (var xPos = 0; xPos < this.state.values[yPos].length; xPos++) {
+        if (index === yPos) {
+          sum += this.state.values[yPos][xPos];
+        }
+      }
+    }
+    return sum;
+  }
+
+  renderVerticalSums() {
+    const arraySums = [];
+    for (var yPos = 0; yPos < this.state.values.length; yPos++) {
+      for (var xPos = 0; xPos < this.state.values[yPos].length; xPos++) {
+        if (arraySums[xPos] === undefined) {
+          arraySums[xPos] = 0;
+        }
+        arraySums[xPos] += this.state.values[yPos][xPos];
+      }
+    }
+    //  const arraySums = this.state.values.reduce((sums,arr) => {
+
+    //  },[])
+
+    const sums = arraySums.map(val => (
+      <td className="tdBold">
+        <input disabled type="number" value={val} />
+      </td>
+    ));
+
+    return sums;
+  }
+
+  calcSum() {
+    var sum = 0;
+    for (var yPos = 0; yPos < this.state.values.length; yPos++) {
+      for (var xPos = 0; xPos < this.state.values[yPos].length; xPos++) {
+        sum += this.state.values[yPos][xPos];
+      }
+    }
+
+    return sum;
   }
 
   render() {
@@ -106,6 +156,10 @@ export default class ContingencyTable extends React.Component {
             <tr>
               <td className="buttonAdd" onClick={this.addVertical.bind(this)}>
                 +
+              </td>
+              {this.renderVerticalSums()}
+              <td className="tdBold">
+                <input disabled type="number" value={this.calcSum()} />
               </td>
             </tr>
           </tbody>

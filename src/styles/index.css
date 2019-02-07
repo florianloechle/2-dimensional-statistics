@@ -24,12 +24,12 @@ table {
 }
 
 table td {
-  width: 55px;
+  width: 75px;
   height: 40px;
 }
 
 table input {
-  width: 55px;
+  width: 75px;
   text-align: center;
   height: 40px;
   line-height: 40px;
@@ -37,7 +37,7 @@ table input {
 }
 
 .tdBold {
-  width: 40px;
+  width: 75px;
   font-weight: bold;
   background-color: lightgrey;
 }
@@ -46,5 +46,6 @@ table input {
   background-color: lightgreen;
   font-weight: bold;
   font-size: 25px;
-  width: 50px;
+  width: 75px;
+  height: 40px;
 }
