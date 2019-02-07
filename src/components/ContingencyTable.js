@@ -7,7 +7,7 @@ export default class ContingencyTable extends React.Component {
     labelHor: 'Age',
     labelVer: 'Income',
     xThead: [1, 2, 3],
-    yTHead: [2, 3, 4],
+    yThead: [2, 3, 4],
     values: [[1, 2, 3], [4, 5, 6], [7, 8, 9]],
   };
 
@@ -26,29 +26,23 @@ export default class ContingencyTable extends React.Component {
   addVertical() {
     this.setState(state => {
       return {
-        yTHead: [...state.yTHead, 0],
+        yThead: [...state.yThead, 0],
         values: [...state.values, new Array(state.xThead.length).fill(0)],
       };
     });
   }
 
-  changeVal(event, index) {
-    console.log(event);
-    this.setState(state => {
-      const newX = state.xThead;
-      newX[index] = event.target.value;
-
-      return {
-        xThead: newX,
-      };
-    });
+  changeVal(index, event) {
+    const newX = this.state.xThead;
+    newX[index] = event.target.value;
+    this.setState({ xThead: newX });
   }
 
   renderFirstRow() {
     const td = this.state.xThead.map((value, i) => (
       <th key={i} className="tdBold">
         <input
-          onChange={e => this.changeVal(e, i)}
+          onInput={this.changeVal.bind(this, i)}
           type="number"
           value={value}
         />
@@ -58,14 +52,14 @@ export default class ContingencyTable extends React.Component {
   }
 
   renderRest() {
-    const rows = this.state.yTHead.map((yTHead, index) => (
-      <tr key={index}>
+    const rows = this.state.yThead.map((yThead, i) => (
+      <tr key={i}>
         <td className="tdBold">
-          <input type="number" />
+          <input type="number" value={yThead} />
         </td>
-        {this.state.values[index].map((arrayDim2, i) => (
-          <td key={i}>
-            <input type="number" />
+        {this.state.values[i].map((arrayDim2, i2) => (
+          <td key={i2}>
+            <input type="number" value={arrayDim2} />
           </td>
         ))}
       </tr>
