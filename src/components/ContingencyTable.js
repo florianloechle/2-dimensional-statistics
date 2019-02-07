@@ -71,7 +71,7 @@ export default class ContingencyTable extends React.Component {
     // JSON parse to make a copy of the object instead of a reference
     const newValues = JSON.parse(JSON.stringify(this.state.values));
 
-    // leading zeroes will be removed
+    // leading zeros will be removed
     const newValue = Number(parseInt(event.target.value), 10);
 
     // datatype integer is being forced, value must be >= 0 and new total sum <= 100
@@ -89,6 +89,7 @@ export default class ContingencyTable extends React.Component {
     // max allowed unique points: 30
     if (this.checkForUniqueLimit(newValues) === true) {
       this.setState({ values: newValues });
+      console.log(newValues);
     }
   }
 
