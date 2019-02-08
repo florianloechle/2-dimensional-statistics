@@ -12,26 +12,94 @@ export default class ContingencyTable extends React.Component {
     rows: [[0, 0], [0, 0]],
   };
 
-  addHorizontal() {
+  static ACTIONS = {
+    ADD_ROW: 'ADD_ROW',
+    REMOVE_ROW: 'REMOVE_ROW',
+    ADD_COLUMN: 'ADD_COLUMN',
+    REMOVE_COLUMN: 'REMOVE_COLUMN',
+  };
+
+  stateReducer = (state, action) => {
+    switch (action) {
+      case ContingencyTable.ACTIONS.ADD_ROW: {
+        return {
+          yThead: [...state.yThead, 0],
+          rows: [...state.rows, new Array(state.rows[0].length).fill(0)],
+        };
+      }
+      case ContingencyTable.ACTIONS.REMOVE_ROW: {
+        return {
+          yThead: state.yThead.slice(0, state.yThead.length - 1),
+          rows: state.rows.slice(0, state.rows.length - 1),
+        };
+      }
+      case ContingencyTable.ACTIONS.ADD_COLUMN: {
+        return {
+          xThead: [...state.xThead, 0],
+          rows: state.rows.map(row => [...row, 0]),
+        };
+      }
+      case ContingencyTable.ACTIONS.REMOVE_COLUMN: {
+        return {
+          xThead: state.xThead.slice(0, state.xThead.length - 1),
+          rows: state.rows.map(row => row.slice(0, row.length - 1)),
+        };
+      }
+      default: {
+        return state;
+      }
+    }
+  };
+
+  dispatch = (action, callback) => {
+    return this.setState(state => {
+      return this.stateReducer(state, action);
+    }, callback && callback());
+  };
+
+  addRow = () => {
+    return this.dispatch(ContingencyTable.ACTIONS.ADD_ROW);
+  };
+
+  removeRow = () => {
+    if (this.state.rows.length > 1) {
+      return this.dispatch(ContingencyTable.ACTIONS.REMOVE_ROW);
+    }
+  };
+
+  addColumn = () => {
+    return this.dispatch(ContingencyTable.ACTIONS.ADD_COLUMN);
+  };
+
+  removeColumn = () => {
+    if (this.state.rows[0].length > 1) {
+      return this.dispatch(ContingencyTable.ACTIONS.REMOVE_COLUMN);
+    }
+  };
+
+  handleDataValueChange = (event, rowIndex, valueIndex) => {
     this.setState(state => {
-      const xThead = state.xThead;
-      const newXY = this.state.rows.map(a => [...a, 0]);
+      const rows = state.rows.slice();
+
+      rows[rowIndex][valueIndex] = event.target.value;
 
       return {
-        xThead: [...xThead, this.state.xThead.length + 1],
-        rows: newXY,
+        rows: rows,
       };
     });
-  }
+  };
 
-  addVertical() {
+  handleTHeadValueChange = ({ target: { value } }, head, index) => {
     this.setState(state => {
-      return {
-        yThead: [...state.yThead, this.state.yThead.length + 1],
-        rows: [...state.rows, new Array(state.xThead.length).fill(0)],
-      };
+      switch (head) {
+        case 'X': {
+          return {
+            xThead: state.xThead.map((v, i) => (i === index ? value : v)),
+          };
+        }
+      }
     });
-  }
+  };
 
   checkForUniqueLimit(newrows) {
     var count = 0;
@@ -43,7 +111,7 @@ export default class ContingencyTable extends React.Component {
       }
     }
 
-    if (count <= 30) {
+    if (count <= MAX_ALLOWED_DATA_POINTS) {
       return true;
     } else {
       alert('Only 30 unique points allowed!');
@@ -76,7 +144,7 @@ export default class ContingencyTable extends React.Component {
     if (
       Number.isInteger(newValue) === true &&
       newValue >= 0 &&
-      this.calcSum() + (newValue - oldValue) <= 100
+      this.calcSum() + (newValue - oldValue) <= MAX_ALLOWED_SUM
     ) {
       newrows[index1][index2] = newValue;
     } else if (event.target.value === '') {
@@ -187,10 +255,7 @@ export default class ContingencyTable extends React.Component {
               <td className="tdBold" />
               {this.renderFirstRow()}
               <td>
-                <div
-                  className="buttonAdd unselectable"
-                  onClick={this.addHorizontal.bind(this)}
-                >
+                <div className="buttonAdd unselectable" onClick={this.addRow}>
                   +
                 </div>
               </td>
@@ -200,7 +265,7 @@ export default class ContingencyTable extends React.Component {
               <td>
                 <div
                   className="buttonAdd unselectable"
-                  onClick={this.addVertical.bind(this)}
+                  onClick={this.addColumn}
                 >
                   +
                 </div>

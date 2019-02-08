@@ -2,20 +2,41 @@
 
 import React from 'react';
 
-const DataTable = ({ rows, onValueChange, errors }) => (
+const TableRow = ({ row = [], yThead, onValueChange, rowIndex }) => (
   <tr>
-    {rows.map((arrayDim2, i2) => (
-      <td key={i2}>
+    <td>
+      <input
+        className="tdY"
+        type="number"
+        value={yThead}
+        onInput={e => onValueChange(e, 0, 0)}
+      />
+    </td>
+    {row.map((value, valueIndex) => (
+      <td key={valueIndex}>
         <input
-          className="tdXY"
           type="number"
-          value={arrayDim2}
-          onInput={this.handleChangeXY.bind(this, i2)}
+          value={value}
+          onChange={e => onValueChange(e, rowIndex, valueIndex)}
         />
       </td>
     ))}
-    <td className="tdBold">
-      <input disabled value={this.calcHorSum()} />
-    </td>
   </tr>
 );
+
+const DataTable = ({ rows = [], onValueChange, errors }) => {
+  return (
+    <>
+      {rows.map((row, i) => (
+        <TableRow
+          key={i}
+          rowIndex={i}
+          row={row}
+          onValueChange={onValueChange}
+        />
+      ))}
+    </>
+  );
+};
+
+export default DataTable;
