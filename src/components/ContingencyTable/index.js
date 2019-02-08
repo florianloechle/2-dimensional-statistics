@@ -2,27 +2,24 @@
 
 import React from 'react';
 
+const MAX_ALLOWED_DATA_POINTS = 30;
+const MAX_ALLOWED_SUM = 100;
+
 export default class ContingencyTable extends React.Component {
   state = {
-    xThead: [1, 2, 3, 4, 5, 6],
-    yThead: [1, 2, 3, 4, 5],
-    values: [
-      [1, 1, 1, 1, 1, 1],
-      [1, 1, 1, 1, 1, 1],
-      [1, 1, 1, 1, 1, 1],
-      [1, 1, 1, 1, 1, 1],
-      [1, 1, 1, 1, 1, 1],
-    ],
+    xThead: [0, 0],
+    yThead: [0, 0],
+    rows: [[0, 0], [0, 0]],
   };
 
   addHorizontal() {
     this.setState(state => {
       const xThead = state.xThead;
-      const newXY = this.state.values.map(a => [...a, 0]);
+      const newXY = this.state.rows.map(a => [...a, 0]);
 
       return {
         xThead: [...xThead, this.state.xThead.length + 1],
-        values: newXY,
+        rows: newXY,
       };
     });
   }
@@ -31,16 +28,16 @@ export default class ContingencyTable extends React.Component {
     this.setState(state => {
       return {
         yThead: [...state.yThead, this.state.yThead.length + 1],
-        values: [...state.values, new Array(state.xThead.length).fill(0)],
+        rows: [...state.rows, new Array(state.xThead.length).fill(0)],
       };
     });
   }
 
-  checkForUniqueLimit(newValues) {
+  checkForUniqueLimit(newrows) {
     var count = 0;
-    for (var yPos = 0; yPos < newValues.length; yPos++) {
-      for (var xPos = 0; xPos < newValues[yPos].length; xPos++) {
-        if (newValues[yPos][xPos] > 0) {
+    for (var yPos = 0; yPos < newrows.length; yPos++) {
+      for (var xPos = 0; xPos < newrows[yPos].length; xPos++) {
+        if (newrows[yPos][xPos] > 0) {
           count += 1;
         }
       }
@@ -67,10 +64,11 @@ export default class ContingencyTable extends React.Component {
   }
 
   handleChangeXY(index1, index2, event) {
-    const oldValue = this.state.values[index1][index2];
+    const oldValue = this.state.rows[index1][index2];
     // JSON parse to make a copy of the object instead of a reference
-    const newValues = JSON.parse(JSON.stringify(this.state.values));
+    const newrows = JSON.parse(JSON.stringify(this.state.rows));
 
+    console.log(typeof event.target.value);
     // leading zeros will be removed
     const newValue = Number(parseInt(event.target.value), 10);
 
@@ -80,25 +78,25 @@ export default class ContingencyTable extends React.Component {
       newValue >= 0 &&
       this.calcSum() + (newValue - oldValue) <= 100
     ) {
-      newValues[index1][index2] = newValue;
+      newrows[index1][index2] = newValue;
     } else if (event.target.value === '') {
       // if value is an empty string, then set to 0
-      newValues[index1][index2] = 0;
+      newrows[index1][index2] = 0;
     }
 
     // max allowed unique points: 30
-    if (this.checkForUniqueLimit(newValues) === true) {
-      this.setState({ values: newValues });
-      console.log(newValues);
+    if (this.checkForUniqueLimit(newrows) === true) {
+      this.setState({ rows: newrows });
+      console.log(newrows);
     }
   }
 
   calcHorSum(index) {
     var sum = 0;
-    for (var yPos = 0; yPos < this.state.values.length; yPos++) {
-      for (var xPos = 0; xPos < this.state.values[yPos].length; xPos++) {
+    for (var yPos = 0; yPos < this.state.rows.length; yPos++) {
+      for (var xPos = 0; xPos < this.state.rows[yPos].length; xPos++) {
         if (index === yPos) {
-          sum += this.state.values[yPos][xPos];
+          sum += this.state.rows[yPos][xPos];
         }
       }
     }
@@ -107,9 +105,9 @@ export default class ContingencyTable extends React.Component {
 
   calcSum() {
     var sum = 0;
-    for (var yPos = 0; yPos < this.state.values.length; yPos++) {
-      for (var xPos = 0; xPos < this.state.values[yPos].length; xPos++) {
-        sum += this.state.values[yPos][xPos];
+    for (var yPos = 0; yPos < this.state.rows.length; yPos++) {
+      for (var xPos = 0; xPos < this.state.rows[yPos].length; xPos++) {
+        sum += this.state.rows[yPos][xPos];
       }
     }
 
@@ -141,7 +139,7 @@ export default class ContingencyTable extends React.Component {
             onInput={this.handleChangeY.bind(this, i)}
           />
         </td>
-        {this.state.values[i].map((arrayDim2, i2) => (
+        {this.state.rows[i].map((arrayDim2, i2) => (
           <td key={i2}>
             <input
               className="tdXY"
@@ -162,17 +160,14 @@ export default class ContingencyTable extends React.Component {
 
   renderVerticalSums() {
     const arraySums = [];
-    for (var yPos = 0; yPos < this.state.values.length; yPos++) {
-      for (var xPos = 0; xPos < this.state.values[yPos].length; xPos++) {
+    for (var yPos = 0; yPos < this.state.rows.length; yPos++) {
+      for (var xPos = 0; xPos < this.state.rows[yPos].length; xPos++) {
         if (arraySums[xPos] === undefined) {
           arraySums[xPos] = 0;
         }
-        arraySums[xPos] += this.state.values[yPos][xPos];
+        arraySums[xPos] += this.state.rows[yPos][xPos];
       }
     }
-    //  const arraySums = this.state.values.reduce((sums,arr) => {
-
-    //  },[])
 
     const sums = arraySums.map(val => (
       <td className="tdBold">
