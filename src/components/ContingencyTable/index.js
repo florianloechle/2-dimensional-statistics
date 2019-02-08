@@ -97,6 +97,13 @@ export default class ContingencyTable extends React.Component {
             xThead: state.xThead.map((v, i) => (i === index ? value : v)),
           };
         }
+        case 'Y': {
+          return {
+            yThead: state.yThead.map((v, i) => (i === index ? value : v)),
+          };
+        }
+        default:
+          return null;
       }
     });
   };
