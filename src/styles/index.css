@@ -9,30 +9,49 @@
     height: 50px;
 }
 
+.rightBottomDiv{
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    padding-right: 30px;
+    padding-bottom: 30px;
+}
+
 .mainButton{
     width: 120px;
 }
 
-table, td, th {
+.centerTable{
+    position: absolute;
+    margin: auto;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    width: 450px;
+    height: 100px;
+}
+
+/* table, td, th {
     border: 1px solid rgb(0, 0, 0);
     text-align: left;
-}
+} */
   
-table {
+/* table {
     position: absolute;
     top: 10%;
     left: 10%;
     border-collapse: collapse;
     width: 40%;
-}
+} */
 
-th, td {
+/* th, td {
     padding: 10px;
     text-align: center;
-}
+} */
 
-.tdBold{
+/* .tdBold{
     width: 40px;
     font-weight: bold;
     background-color: lightgrey;
-}
+} */

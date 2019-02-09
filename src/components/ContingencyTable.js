@@ -12,9 +12,7 @@ export default class ContingencyTable extends React.Component {
   };
 
   renderFirstRow() {
-    const td = this.state.xValues.map(value => (
-      <td className="tdBold">{value}</td>
-    ));
+    const td = this.state.xValues.map(value => <th>{value}</th>);
     return td;
   }
 
@@ -22,7 +20,7 @@ export default class ContingencyTable extends React.Component {
     var row = 0;
     const rows = this.state.yValues.map(yValue => (
       <tr>
-        <td className="tdBold">{yValue}</td>
+        <th scope="row">{yValue}</th>
         {this.state.xyValues[row].map(
           arrayDim2 => (
             <td>{arrayDim2}</td>
@@ -37,19 +35,21 @@ export default class ContingencyTable extends React.Component {
 
   renderTable() {
     return (
-      <table>
-        <tr>
-          <td className="tdBold">
-            {this.state.labelHor}/{this.state.labelVer}
-          </td>
-          {this.renderFirstRow()}
-        </tr>
-        {this.renderRest()}
+      <table className="table table-hover">
+        <thead>
+          <tr>
+            <th scope="col">
+              {this.state.labelHor}/{this.state.labelVer}
+            </th>
+            {this.renderFirstRow()}
+          </tr>
+        </thead>
+        <tbody>{this.renderRest()}</tbody>
       </table>
     );
   }
 
   render() {
-    return <div>{this.renderTable()}</div>;
+    return <div className="centerTable">{this.renderTable()}</div>;
   }
 }
