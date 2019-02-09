@@ -1,7 +1,7 @@
 /** @format */
 import React from 'react';
 import ReactDOM from 'react-dom';
-import ContingencyTable from './components/ContingencyTable';
+// import ContingencyTable from './components/ContingencyTable';
 import './styles/index.css';
 
 class StatisticsApp extends React.Component {
@@ -39,7 +39,6 @@ class StatisticsApp extends React.Component {
     } else if (this.state.userChoice === 2) {
       return (
         <div>
-          <ContingencyTable />
           <button className="buttonNext unselectable">Weiter</button>
         </div>
       );
