@@ -93,7 +93,7 @@ describe('The Statistics class', () => {
     });
   });
 
-  describe.only('Properties', () => {
+  describe('Properties', () => {
     const stats = new Statistics(providedSample);
 
     it('returns the correct mean for both x and y values', () => {
