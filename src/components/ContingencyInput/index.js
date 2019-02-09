@@ -1,130 +1,84 @@
 /** @format */
 
 import React from 'react';
+import DataTable from './DataTable';
 
 const MAX_ALLOWED_DATA_POINTS = 30;
 const MAX_ALLOWED_SUM = 100;
 
-export default class ContingencyTable extends React.Component {
+const ACTIONS = {
+  ADD_ROW: 'ADD_ROW',
+  REMOVE_ROW: 'REMOVE_ROW',
+  ADD_COLUMN: 'ADD_COLUMN',
+  REMOVE_COLUMN: 'REMOVE_COLUMN',
+};
+
+// TODO: Implement contingency table
+
+export default class ContingencyInput extends React.Component {
   state = {
     xThead: [0, 0],
     yThead: [0, 0],
     rows: [[0, 0], [0, 0]],
+    sum: 0,
   };
 
-  static ACTIONS = {
-    ADD_ROW: 'ADD_ROW',
-    REMOVE_ROW: 'REMOVE_ROW',
-    ADD_COLUMN: 'ADD_COLUMN',
-    REMOVE_COLUMN: 'REMOVE_COLUMN',
-  };
-
-  stateReducer = (state, action) => {
-    switch (action) {
-      case ContingencyTable.ACTIONS.ADD_ROW: {
-        return {
-          yThead: [...state.yThead, 0],
-          rows: [...state.rows, new Array(state.rows[0].length).fill(0)],
-        };
-      }
-      case ContingencyTable.ACTIONS.REMOVE_ROW: {
-        return {
-          yThead: state.yThead.slice(0, state.yThead.length - 1),
-          rows: state.rows.slice(0, state.rows.length - 1),
-        };
-      }
-      case ContingencyTable.ACTIONS.ADD_COLUMN: {
-        return {
-          xThead: [...state.xThead, 0],
-          rows: state.rows.map(row => [...row, 0]),
-        };
-      }
-      case ContingencyTable.ACTIONS.REMOVE_COLUMN: {
-        return {
-          xThead: state.xThead.slice(0, state.xThead.length - 1),
-          rows: state.rows.map(row => row.slice(0, row.length - 1)),
-        };
-      }
-      default: {
-        return state;
-      }
-    }
-  };
-
-  dispatch = (action, callback) => {
-    return this.setState(state => {
-      return this.stateReducer(state, action);
-    }, callback && callback());
+  layoutReducer = (action, callback) => {
+    this.setState(
+      state => {
+        switch (action) {
+          case ACTIONS.ADD_ROW: {
+            return {
+              yThead: [...state.yThead, 0],
+              rows: [...state.rows, new Array(state.rows[0].length).fill(0)],
+            };
+          }
+          case ACTIONS.REMOVE_ROW: {
+            return {
+              yThead: state.yThead.slice(0, state.yThead.length - 1),
+              rows: state.rows.slice(0, state.rows.length - 1),
+            };
+          }
+          case ACTIONS.ADD_COLUMN: {
+            return {
+              xThead: [...state.xThead, 0],
+              rows: state.rows.map(row => [...row, 0]),
+            };
+          }
+          case ACTIONS.REMOVE_COLUMN: {
+            return {
+              xThead: state.xThead.slice(0, state.xThead.length - 1),
+              rows: state.rows.map(row => row.slice(0, row.length - 1)),
+            };
+          }
+          default: {
+            return null;
+          }
+        }
+      },
+      () => callback && callback()
+    );
   };
 
   addRow = () => {
-    return this.dispatch(ContingencyTable.ACTIONS.ADD_ROW);
+    return this.layoutReducer(ACTIONS.ADD_ROW);
   };
 
   removeRow = () => {
     if (this.state.rows.length > 1) {
-      return this.dispatch(ContingencyTable.ACTIONS.REMOVE_ROW);
+      return this.layoutReducer(ACTIONS.REMOVE_ROW);
     }
   };
 
   addColumn = () => {
-    return this.dispatch(ContingencyTable.ACTIONS.ADD_COLUMN);
+    return this.layoutReducer(ACTIONS.ADD_COLUMN);
   };
 
   removeColumn = () => {
     if (this.state.rows[0].length > 1) {
-      return this.dispatch(ContingencyTable.ACTIONS.REMOVE_COLUMN);
+      return this.layoutReducer(ACTIONS.REMOVE_COLUMN);
     }
   };
-
-  handleDataValueChange = (event, rowIndex, valueIndex) => {
-    this.setState(state => {
-      const rows = state.rows.slice();
-
-      rows[rowIndex][valueIndex] = event.target.value;
-
-      return {
-        rows: rows,
-      };
-    });
-  };
-
-  handleTHeadValueChange = ({ target: { value } }, head, index) => {
-    this.setState(state => {
-      switch (head) {
-        case 'X': {
-          return {
-            xThead: state.xThead.map((v, i) => (i === index ? value : v)),
-          };
-        }
-        case 'Y': {
-          return {
-            yThead: state.yThead.map((v, i) => (i === index ? value : v)),
-          };
-        }
-        default:
-          return null;
-      }
-    });
-  };
-
-  checkForUniqueLimit(newrows) {
-    var count = 0;
-    for (var yPos = 0; yPos < newrows.length; yPos++) {
-      for (var xPos = 0; xPos < newrows[yPos].length; xPos++) {
-        if (newrows[yPos][xPos] > 0) {
-          count += 1;
-        }
-      }
-    }
-
-    if (count <= MAX_ALLOWED_DATA_POINTS) {
-      return true;
-    } else {
-      alert('Only 30 unique points allowed!');
-      return false;
-    }
-  }
 
   handleChangeX(index, event) {
     const newX = this.state.xThead;
@@ -164,29 +118,6 @@ export default class ContingencyTable extends React.Component {
       this.setState({ rows: newrows });
       console.log(newrows);
     }
-  }
-
-  calcHorSum(index) {
-    var sum = 0;
-    for (var yPos = 0; yPos < this.state.rows.length; yPos++) {
-      for (var xPos = 0; xPos < this.state.rows[yPos].length; xPos++) {
-        if (index === yPos) {
-          sum += this.state.rows[yPos][xPos];
-        }
-      }
-    }
-    return sum;
-  }
-
-  calcSum() {
-    var sum = 0;
-    for (var yPos = 0; yPos < this.state.rows.length; yPos++) {
-      for (var xPos = 0; xPos < this.state.rows[yPos].length; xPos++) {
-        sum += this.state.rows[yPos][xPos];
-      }
-    }
-
-    return sum;
   }
 
   renderFirstRow() {
@@ -254,6 +185,8 @@ export default class ContingencyTable extends React.Component {
   }
 
   render() {
+    const currentSum = this.state.sum;
+
     return (
       <div className="centerParent">
         <table>
@@ -267,6 +200,7 @@ export default class ContingencyTable extends React.Component {
                 </div>
               </td>
             </tr>
+            <DataTable rows={this.state.rows} />
             {this.renderRest()}
             <tr>
               <td>

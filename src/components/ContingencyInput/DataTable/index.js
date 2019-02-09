@@ -24,7 +24,7 @@ const TableRow = ({ row = [], yThead, onValueChange, rowIndex }) => (
   </tr>
 );
 
-const DataTable = ({ rows = [], onValueChange, errors }) => {
+const DataTable = ({ rows = [], yThead = [], onValueChange, errors }) => {
   return (
     <>
       {rows.map((row, i) => (
