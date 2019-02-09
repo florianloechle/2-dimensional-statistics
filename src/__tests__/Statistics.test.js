@@ -45,15 +45,12 @@ describe('The Statistics class', () => {
     });
 
     it('exposes the right property getters', () => {
-      const sampleData = oneDimensionSample.reduce(
-        (acc, array) => [...acc, [array[0], array[1]]],
-        []
-      );
-
-      const stats = new Statistics(sampleData);
+      const stats = new Statistics(providedSample);
 
       expect(stats.variance).toBeDefined();
       expect(stats.mean).toBeDefined();
+      expect(stats.correlationCoefficient).toBeDefined();
+      expect(stats.regressionLine).toBeDefined();
     });
   });
 
@@ -118,10 +115,10 @@ describe('The Statistics class', () => {
       expect(cC).toEqual(0.5556412072985271);
     });
 
-    it.only('computes the correct regression line', () => {
+    it('computes the correct regression line', () => {
       const regressionLine = stats.regressionLine;
 
-      // need to add checks
+      // TODO: need to add checks
     });
   });
 });
