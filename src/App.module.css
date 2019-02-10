@@ -1,0 +1,43 @@
+/** @format */
+
+*,
+*:after,
+*:before {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-family: 'Open Sans', sans-serif;
+}
+
+body {
+  font-family: inherit;
+}
+
+:root {
+  --color-white: #ffffff;
+  --color-white-dark: #dfdfdf;
+  --color-white-transparent: rgba(255,255,255,.9);
+
+  --color-red: #c31616;
+  --color-red-transparent: rgba(195, 22, 22, .9);
+
+  --color-black: #000000;
+}
+
+.app {
+  height: 100vh;
+  width: 100%;
+  background-image: linear-gradient(
+      to bottom left,
+      var(--color-red-transparent),
+      var(--color-white-transparent)
+    ),
+    url('./assets/images/background.jpg');
+  background-size: cover;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
