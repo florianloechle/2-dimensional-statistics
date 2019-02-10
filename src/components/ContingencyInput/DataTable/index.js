@@ -2,13 +2,12 @@
 
 import React from 'react';
 
-const TableRow = ({ row = [], yThead, onValueChange, rowIndex }) => (
+const TableRow = ({ row = [], rowTotal, onValueChange, rowIndex }) => (
   <tr>
     <td>
       <input
         className="tdY"
         type="number"
-        value={yThead}
         onInput={e => onValueChange(e, 0, 0)}
       />
     </td>
@@ -21,14 +20,16 @@ const TableRow = ({ row = [], yThead, onValueChange, rowIndex }) => (
         />
       </td>
     ))}
+    <td>{rowTotal}</td>
   </tr>
 );
 
-const DataTable = ({ rows = [], yThead = [], onValueChange, errors }) => {
+const DataTable = ({ rows = [], rowTotals, onValueChange }) => {
   return (
     <>
       {rows.map((row, i) => (
         <TableRow
+          rowTotal={rowTotals[i]}
           key={i}
           rowIndex={i}
           row={row}
