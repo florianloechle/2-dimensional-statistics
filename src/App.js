@@ -1,6 +1,7 @@
 /** @format */
 
 import React from 'react';
+import Layout from './components/Layout';
 import DotSequency from './components/DotSequency';
 import styles from './App.module.css';
 
@@ -11,10 +12,9 @@ class StatisticApp extends React.Component {
 
   render() {
     return (
-      <div className={styles.app}>
-        <main className="card" />
-        <footer />
-      </div>
+      <Layout>
+        <h1>Hello</h1>
+      </Layout>
     );
   }
 }
