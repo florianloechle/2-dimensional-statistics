@@ -9,23 +9,29 @@
 }
 
 html {
-  font-family: 'Open Sans', sans-serif;
+ font-family: 'Gochi Hand', cursive !important;
 }
 
 body {
-  font-family: inherit;
+  font-family: inherit !important;
+  cursor: url(http://www.rw-designer.com/cursor-extern.php?id=99805), auto;
 }
 
 :root {
   --color-white: #ffffff;
   --color-white-dark: #dfdfdf;
-  --color-white-transparent: rgba(255,255,255,.9);
+  --color-white-transparent: rgba(255, 255, 255, 0.9);
 
   --color-red: #c31616;
-  --color-red-transparent: rgba(195, 22, 22, .9);
+  --color-red-transparent: rgba(195, 22, 22, 0.9);
 
   --color-grey: #787878;
   --color-grey-dark: #4e4e4e;
 
   --color-black: #000000;
+  --color-black-transparent: #000000b9;
+
+  --media-br-phone: 414px;
+  --media-br-tablet: 876px;
 }
+
