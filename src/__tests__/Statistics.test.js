@@ -2,8 +2,36 @@
 
 import Statistics from '../lib/Statistics';
 
+const providedSample = [
+  [20, 0.2],
+  [20, 0.3],
+  [30, 0.3],
+  [20, 0.3],
+  [30, 0.4],
+  [20, 0.1],
+  [30, 0.3],
+  [40, 0.3],
+  [10, 0.1],
+  [40, 0.2],
+  [30, 0.3],
+  [40, 0.3],
+  [30, 0.3],
+  [20, 0.1],
+  [30, 0.3],
+  [40, 0.3],
+  [30, 0.4],
+  [10, 0.1],
+  [20, 0.3],
+  [10, 0.2],
+  [30, 0.3],
+  [20, 0.3],
+  [10, 0.2],
+  [40, 0.3],
+  [30, 0.2],
+];
+
 describe('The Statistics class', () => {
-  const samples = [
+  const oneDimensionSample = [
     [6, 6, 6],
     [165, 178, 172, 195, 184, 168, 177, 184, 176, 171],
     [79, 70, 75, 100, 75, 60, 78, 92, 70, 71],
@@ -17,37 +45,80 @@ describe('The Statistics class', () => {
     });
 
     it('exposes the right property getters', () => {
-      const sampleData = samples.reduce(
-        (acc, array) => [...acc, [array[0], array[1]]],
-        []
-      );
-
-      const stats = new Statistics(sampleData);
+      const stats = new Statistics(providedSample);
 
       expect(stats.variance).toBeDefined();
       expect(stats.mean).toBeDefined();
+      expect(stats.correlationCoefficient).toBeDefined();
+      expect(stats.regressionLine).toBeDefined();
     });
   });
 
   describe('Average (mean)', () => {
     test.each`
-      samples       | expected
-      ${samples[0]} | ${6}
-      ${samples[1]} | ${177}
-      ${samples[2]} | ${77}
-    `('returns $expected for $samples', ({ samples, expected }) => {
-      expect(Statistics.mean(samples)).toBe(expected);
-    });
+      oneDimensionSample       | expected
+      ${oneDimensionSample[0]} | ${6}
+      ${oneDimensionSample[1]} | ${177}
+      ${oneDimensionSample[2]} | ${77}
+    `(
+      'returns $expected for $oneDimensionSample',
+      ({ oneDimensionSample, expected }) => {
+        expect(Statistics.mean(oneDimensionSample)).toBe(expected);
+      }
+    );
   });
 
   describe('Variance', () => {
     test.each`
-      samples       | expected
-      ${samples[0]} | ${0}
-      ${samples[1]} | ${78.88889}
-      ${samples[2]} | ${132.22222}
-    `('returns $expected for $samples', ({ samples, expected }) => {
-      expect(Number(Statistics.variance(samples).toFixed(5))).toBe(expected);
+      oneDimensionSample       | expected
+      ${oneDimensionSample[0]} | ${0}
+      ${oneDimensionSample[1]} | ${78.88889}
+      ${oneDimensionSample[2]} | ${132.22222}
+    `(
+      'returns $expected for $oneDimensionSample',
+      ({ oneDimensionSample, expected }) => {
+        expect(Number(Statistics.variance(oneDimensionSample).toFixed(5))).toBe(
+          expected
+        );
+      }
+    );
+  });
+
+  describe('Initilization', () => {
+    it('inititalizes with a multidimensional array', () => {
+      expect(() => new Statistics(providedSample)).not.toThrow();
+    });
+  });
+
+  describe('Properties', () => {
+    const stats = new Statistics(providedSample);
+
+    it('returns the correct mean for both x and y values', () => {
+      const means = stats.mean;
+      expect(means).toBeInstanceOf(Object);
+      expect(means).toMatchObject({ x: 26, y: 0.256 });
+    });
+
+    it('returns the correct variance for both x and y values', () => {
+      const variances = stats.variance;
+      expect(variances).toBeInstanceOf(Object);
+      expect(variances).toMatchObject({ x: 100, y: 0.007566666666666663 });
+    });
+
+    it('returns the correct covariance', () => {
+      const covariance = stats.covariance;
+      expect(covariance).toEqual(0.4833333333333334);
+    });
+
+    it('returns the correct correlationCoefficient', () => {
+      const cC = stats.correlationCoefficient;
+      expect(cC).toEqual(0.5556412072985271);
+    });
+
+    it('computes the correct regression line', () => {
+      const regressionLine = stats.regressionLine;
+
+      // TODO: need to add checks
     });
   });
 });
