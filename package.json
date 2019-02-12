@@ -36,6 +36,8 @@
     "build:prod": "npm run validate && react-scripts build"
   },
   "dependencies": {
+    "bootstrap": "^4.2.1",
+    "prop-types": "^15.7.1",
     "react": "^16.7.0",
     "react-dom": "^16.7.0",
     "react-scripts": "2.1.3"

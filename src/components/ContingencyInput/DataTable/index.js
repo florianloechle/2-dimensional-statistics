@@ -3,38 +3,45 @@
 import React from 'react';
 
 const TableRow = ({ row = [], rowTotal, onValueChange, rowIndex }) => (
-  <tr>
-    <td>
-      <input
-        className="tdY"
-        type="number"
-        onInput={e => onValueChange(e, 0, 0)}
-      />
-    </td>
+  <>
     {row.map((value, valueIndex) => (
       <td key={valueIndex}>
         <input
-          type="number"
-          value={value}
+          defaultValue={value}
+          type="text"
           onChange={e => onValueChange(e, rowIndex, valueIndex)}
         />
       </td>
     ))}
     <td>{rowTotal}</td>
-  </tr>
+  </>
 );
 
-const DataTable = ({ rows = [], rowTotals, onValueChange }) => {
+const DataTable = ({
+  rows = [],
+  onYValueChange,
+  rowTotals,
+  yValues,
+  onDataValueChange,
+}) => {
   return (
     <>
       {rows.map((row, i) => (
-        <TableRow
-          rowTotal={rowTotals[i]}
-          key={i}
-          rowIndex={i}
-          row={row}
-          onValueChange={onValueChange}
-        />
+        <tr key={i}>
+          <th scope="row">
+            <input
+              defaultValue={yValues[i]}
+              type="text"
+              onChange={e => onYValueChange(e, i)}
+            />
+          </th>
+          <TableRow
+            rowTotal={rowTotals[i]}
+            rowIndex={i}
+            row={row}
+            onValueChange={onDataValueChange}
+          />
+        </tr>
       ))}
     </>
   );

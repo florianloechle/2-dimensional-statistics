@@ -1,2 +1,16 @@
 /** @format */
 
+table {
+  text-align: center;
+}
+
+td input, th input {
+  width: 80px;
+  text-align: center;
+  line-height: 20px;
+  font-size: 20px;
+}
+
+td, th {
+  width: 80px;
+}
