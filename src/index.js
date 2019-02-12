@@ -1,12 +1,10 @@
 /** @format */
 import React from 'react';
 import ReactDOM from 'react-dom';
-import ContingencyTable from './components/ContingencyTable';
-import './styles/index.css';
+import StatisticApp from './App';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import DotSequency from './components/DotSequency';
 
-class StatisticsApp extends React.Component {
+/* class StatisticsApp extends React.Component {
   state = {
     userChoice: null,
     //userChoice: 2
@@ -85,8 +83,8 @@ class StatisticsApp extends React.Component {
   render() {
     return <div>{this.renderChoice()}</div>;
   }
-}
+} */
 
 const root = document.getElementById('root');
 
-ReactDOM.render(<StatisticsApp />, root);
+ReactDOM.render(<StatisticApp />, root);
