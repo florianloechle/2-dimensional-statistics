@@ -1,0 +1,31 @@
+/** @format */
+
+*,
+*:after,
+*:before {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-family: 'Open Sans', sans-serif;
+}
+
+body {
+  font-family: inherit;
+}
+
+:root {
+  --color-white: #ffffff;
+  --color-white-dark: #dfdfdf;
+  --color-white-transparent: rgba(255,255,255,.9);
+
+  --color-red: #c31616;
+  --color-red-transparent: rgba(195, 22, 22, .9);
+
+  --color-grey: #787878;
+  --color-grey-dark: #4e4e4e;
+
+  --color-black: #000000;
+}
