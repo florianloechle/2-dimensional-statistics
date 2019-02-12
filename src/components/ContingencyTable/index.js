@@ -1,290 +1,157 @@
 /** @format */
 
 import React from 'react';
+import PropTypes from 'prop-types';
+import DataTable from './DataTable';
+import styles from './ContingencyTable.module.css';
 
 const MAX_ALLOWED_DATA_POINTS = 30;
 const MAX_ALLOWED_SUM = 100;
 
 export default class ContingencyTable extends React.Component {
-  state = {
-    xThead: [0, 0],
-    yThead: [0, 0],
-    rows: [[0, 0], [0, 0]],
+  static propTypes = {
+    initalRows: PropTypes.number,
+
+    initalColumns: PropTypes.number,
+
+    onValueChanged: PropTypes.func,
   };
 
-  static ACTIONS = {
-    ADD_ROW: 'ADD_ROW',
-    REMOVE_ROW: 'REMOVE_ROW',
-    ADD_COLUMN: 'ADD_COLUMN',
-    REMOVE_COLUMN: 'REMOVE_COLUMN',
-  };
+  constructor(props) {
+    super(props);
 
-  stateReducer = (state, action) => {
-    switch (action) {
-      case ContingencyTable.ACTIONS.ADD_ROW: {
-        return {
-          yThead: [...state.yThead, 0],
-          rows: [...state.rows, new Array(state.rows[0].length).fill(0)],
-        };
-      }
-      case ContingencyTable.ACTIONS.REMOVE_ROW: {
-        return {
-          yThead: state.yThead.slice(0, state.yThead.length - 1),
-          rows: state.rows.slice(0, state.rows.length - 1),
-        };
-      }
-      case ContingencyTable.ACTIONS.ADD_COLUMN: {
-        return {
-          xThead: [...state.xThead, 0],
-          rows: state.rows.map(row => [...row, 0]),
-        };
-      }
-      case ContingencyTable.ACTIONS.REMOVE_COLUMN: {
-        return {
-          xThead: state.xThead.slice(0, state.xThead.length - 1),
-          rows: state.rows.map(row => row.slice(0, row.length - 1)),
-        };
-      }
-      default: {
-        return state;
-      }
-    }
-  };
+    const columns = this.props.initalColumns || 4;
+    const rows = this.props.initalRows || 4;
 
-  dispatch = (action, callback) => {
-    return this.setState(state => {
-      return this.stateReducer(state, action);
-    }, callback && callback());
-  };
+    this.state = {
+      x: new Array(columns).fill(0),
+      y: new Array(rows).fill(0),
+      rows: Array.from({ length: rows }).map(() =>
+        Array.from({ length: columns }).fill(0)
+      ),
+      errors: [],
+    };
 
-  addRow = () => {
-    return this.dispatch(ContingencyTable.ACTIONS.ADD_ROW);
-  };
+    this.addRow = this.addRow.bind(this);
+    this.removeRow = this.removeRow.bind(this);
+    this.addColumn = this.addColumn.bind(this);
+    this.removeColumn = this.removeColumn.bind(this);
+    this.handleDataValueChange = this.handleDataValueChange.bind(this);
+  }
 
-  removeRow = () => {
-    if (this.state.rows.length > 1) {
-      return this.dispatch(ContingencyTable.ACTIONS.REMOVE_ROW);
-    }
-  };
-
-  addColumn = () => {
-    return this.dispatch(ContingencyTable.ACTIONS.ADD_COLUMN);
-  };
-
-  removeColumn = () => {
-    if (this.state.rows[0].length > 1) {
-      return this.dispatch(ContingencyTable.ACTIONS.REMOVE_COLUMN);
-    }
-  };
-
-  handleDataValueChange = (event, rowIndex, valueIndex) => {
+  addRow() {
     this.setState(state => {
-      const rows = state.rows.slice();
+      return {
+        y: [...state.y, 0],
+        rows: [...state.rows, new Array(state.x.length).fill(0)],
+      };
+    });
+  }
 
-      rows[rowIndex][valueIndex] = event.target.value;
+  removeRow() {
+    this.setState(state => {
+      return {
+        y: state.y.slice(-1),
+        rows: state.rows.map(row => row.slice(-1)),
+      };
+    });
+  }
 
+  addColumn() {
+    this.setState(state => {
+      return {
+        x: [...state.x, 0],
+        rows: state.rows.map(row => [...row, 0]),
+      };
+    });
+  }
+
+  removeColumn() {
+    this.setState(state => {
+      return {
+        x: state.x.slice(-1),
+        rows: state.rows.map(row => row.slice(-1)),
+      };
+    });
+  }
+
+  setValueError(row, index) {
+    return this.setState(state => {
+      const oldError = state.errors.find(
+        error => error[0] === row && error[1] === index
+      );
+
+      return oldError ? null : { errors: [...state.errors, [row, index]] };
+    });
+  }
+
+  handleDataValueChange = ({ target: { value } }, rowIndex, valueIndex) => {
+    const input = value.replace(/,/g, '.');
+    const numberfied = Number(input);
+    const oldValue = this.state.rows[rowIndex][valueIndex];
+
+    if (Number.isNaN(numberfied)) {
+      return this.setValueError(rowIndex, valueIndex);
+    }
+
+    const rows = this.state.rows.slice();
+    rows[rowIndex][valueIndex] = numberfied;
+    this.setState(state => {
       return {
         rows: rows,
+        errors: state.errors.filter(err => {
+          return err[0] !== rowIndex || err[1] !== valueIndex;
+        }),
       };
     });
   };
 
-  handleTHeadValueChange = ({ target: { value } }, head, index) => {
-    this.setState(state => {
-      switch (head) {
-        case 'X': {
-          return {
-            xThead: state.xThead.map((v, i) => (i === index ? value : v)),
-          };
+  render() {
+    const columnTotals = [];
+    const rowTotals = [];
+    for (let i = 0; i < this.state.x.length; i++) {
+      for (let j = 0; j < this.state.y.length; j++) {
+        const value = this.state.rows[j][i];
+        if (typeof value !== 'number') {
+          continue;
         }
-        case 'Y': {
-          return {
-            yThead: state.yThead.map((v, i) => (i === index ? value : v)),
-          };
-        }
-        default:
-          return null;
-      }
-    });
-  };
-
-  checkForUniqueLimit(newrows) {
-    var count = 0;
-    for (var yPos = 0; yPos < newrows.length; yPos++) {
-      for (var xPos = 0; xPos < newrows[yPos].length; xPos++) {
-        if (newrows[yPos][xPos] > 0) {
-          count += 1;
-        }
+        columnTotals[i] = (columnTotals[i] || 0) + value;
+        rowTotals[j] = (rowTotals[j] || 0) + value;
       }
     }
 
-    if (count <= MAX_ALLOWED_DATA_POINTS) {
-      return true;
-    } else {
-      alert('Only 30 unique points allowed!');
-      return false;
-    }
-  }
-
-  handleChangeX(index, event) {
-    const newX = this.state.xThead;
-    newX[index] = Number(event.target.value);
-    this.setState({ xThead: newX });
-  }
-
-  handleChangeY(index, event) {
-    const newY = this.state.yThead;
-    newY[index] = Number(event.target.value);
-    this.setState({ yThead: newY });
-  }
-
-  handleChangeXY(index1, index2, event) {
-    const oldValue = this.state.rows[index1][index2];
-    // JSON parse to make a copy of the object instead of a reference
-    const newrows = JSON.parse(JSON.stringify(this.state.rows));
-
-    console.log(typeof event.target.value);
-    // leading zeros will be removed
-    const newValue = Number(parseInt(event.target.value), 10);
-
-    // datatype integer is being forced, value must be >= 0 and new total sum <= 100
-    if (
-      Number.isInteger(newValue) === true &&
-      newValue >= 0 &&
-      this.calcSum() + (newValue - oldValue) <= MAX_ALLOWED_SUM
-    ) {
-      newrows[index1][index2] = newValue;
-    } else if (event.target.value === '') {
-      // if value is an empty string, then set to 0
-      newrows[index1][index2] = 0;
-    }
-
-    // max allowed unique points: 30
-    if (this.checkForUniqueLimit(newrows) === true) {
-      this.setState({ rows: newrows });
-      console.log(newrows);
-    }
-  }
-
-  calcHorSum(index) {
-    var sum = 0;
-    for (var yPos = 0; yPos < this.state.rows.length; yPos++) {
-      for (var xPos = 0; xPos < this.state.rows[yPos].length; xPos++) {
-        if (index === yPos) {
-          sum += this.state.rows[yPos][xPos];
-        }
-      }
-    }
-    return sum;
-  }
-
-  calcSum() {
-    var sum = 0;
-    for (var yPos = 0; yPos < this.state.rows.length; yPos++) {
-      for (var xPos = 0; xPos < this.state.rows[yPos].length; xPos++) {
-        sum += this.state.rows[yPos][xPos];
-      }
-    }
-
-    return sum;
-  }
-
-  renderFirstRow() {
-    const td = this.state.xThead.map((value, i) => (
-      <th key={i}>
-        <input
-          className="tdX"
-          type="number"
-          value={value}
-          onInput={this.handleChangeX.bind(this, i)}
-        />
+    const yColumn = this.state.y.map((v, i) => (
+      <th key={i} scope="row">
+        <input defaultValue={v} onChange={this.handleChangeY} type="text" />
       </th>
     ));
-    return td;
-  }
 
-  renderRest() {
-    const rows = this.state.yThead.map((yThead, i) => (
-      <tr key={i}>
-        <td>
-          <input
-            className="tdY"
-            type="number"
-            value={yThead}
-            onInput={this.handleChangeY.bind(this, i)}
-          />
-        </td>
-        {this.state.rows[i].map((arrayDim2, i2) => (
-          <td key={i2}>
-            <input
-              className="tdXY"
-              type="number"
-              value={arrayDim2}
-              onInput={this.handleChangeXY.bind(this, i, i2)}
-            />
-          </td>
-        ))}
-        <td className="tdBold">
-          <input disabled value={this.calcHorSum(i)} />
-        </td>
-      </tr>
-    ));
-
-    return rows;
-  }
-
-  renderVerticalSums() {
-    const arraySums = [];
-    for (var yPos = 0; yPos < this.state.rows.length; yPos++) {
-      for (var xPos = 0; xPos < this.state.rows[yPos].length; xPos++) {
-        if (arraySums[xPos] === undefined) {
-          arraySums[xPos] = 0;
-        }
-        arraySums[xPos] += this.state.rows[yPos][xPos];
-      }
-    }
-
-    const sums = arraySums.map(val => (
-      <td className="tdBold">
-        <input disabled value={val} />
-      </td>
-    ));
-
-    return sums;
-  }
-
-  render() {
     return (
-      <div className="centerParent">
-        <table>
-          <tbody>
-            <tr>
-              <td className="tdBold" />
-              {this.renderFirstRow()}
-              <td>
-                <div className="buttonAdd unselectable" onClick={this.addRow}>
-                  +
-                </div>
-              </td>
-            </tr>
-            {this.renderRest()}
-            <tr>
-              <td>
-                <div
-                  className="buttonAdd unselectable"
-                  onClick={this.addColumn}
-                >
-                  +
-                </div>
-              </td>
-              {this.renderVerticalSums()}
-              <td className="tdBold">
-                <input disabled value={this.calcSum()} />
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+      <table className={'table table-hover ' + styles.base}>
+        <tbody>
+          <tr className={styles.x}>
+            <th>x / y</th>
+            {this.state.x.map((v, i) => (
+              <th key={i}>
+                <input
+                  defaultValue={v}
+                  onChange={this.handleChangeX}
+                  type="text"
+                />
+              </th>
+            ))}
+            <th>Summen</th>
+          </tr>
+          <DataTable
+            rows={this.state.rows}
+            errors={this.state.errors}
+            onValueChange={this.handleDataValueChange}
+            y={yColumn}
+            columnTotals={columnTotals}
+            rowTotals={rowTotals}
+          />
+        </tbody>
+      </table>
     );
   }
 }

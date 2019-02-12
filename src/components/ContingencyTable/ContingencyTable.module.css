@@ -1,0 +1,23 @@
+.base {
+  height: 200px;
+  text-align: center;
+}
+
+.base input {
+  width: 75px;
+  text-align: inherit;
+}
+
+tbody tr:last-child {
+  border-top: 2px solid black;
+}
+
+tr td:last-child {
+  border-left: 2px solid black;
+}
+
+tr th:last-child {
+  border-left: 2px solid black;
+}
+
+

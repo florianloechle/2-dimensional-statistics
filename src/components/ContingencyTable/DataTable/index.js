@@ -2,39 +2,67 @@
 
 import React from 'react';
 
-const TableRow = ({ row = [], yThead, onValueChange, rowIndex }) => (
+const TableRow = ({
+  row = [],
+  y,
+  rowTotal,
+  onValueChange,
+  rowIndex,
+  errors,
+}) => (
   <tr>
-    <td>
-      <input
-        className="tdY"
-        type="number"
-        value={yThead}
-        onInput={e => onValueChange(e, 0, 0)}
-      />
-    </td>
+    {y}
     {row.map((value, valueIndex) => (
       <td key={valueIndex}>
         <input
-          type="number"
-          value={value}
+          style={
+            errors.includes(valueIndex) ? { border: 'solid 2px red' } : null
+          }
+          placeholder="Wert.."
+          type="text"
+          defaultValue={value}
           onChange={e => onValueChange(e, rowIndex, valueIndex)}
         />
       </td>
     ))}
+    <td>{rowTotal}</td>
   </tr>
 );
 
-const DataTable = ({ rows = [], onValueChange, errors }) => {
+const DataTable = ({
+  rows = [],
+  columnTotals = [],
+  rowTotals,
+  y = [],
+  onValueChange,
+  errors,
+}) => {
   return (
     <>
-      {rows.map((row, i) => (
-        <TableRow
-          key={i}
-          rowIndex={i}
-          row={row}
-          onValueChange={onValueChange}
-        />
-      ))}
+      {rows.map((row, i) => {
+        return (
+          <TableRow
+            key={i}
+            errors={errors.reduce(
+              (err, position) =>
+                position[0] === i ? [...err, position[1]] : err,
+              []
+            )}
+            rowIndex={i}
+            row={row}
+            y={y[i]}
+            rowTotal={rowTotals[i]}
+            onValueChange={onValueChange}
+          />
+        );
+      })}
+      <tr>
+        <th>Summen</th>
+        {columnTotals.map((v, i) => (
+          <td key={i}>{v}</td>
+        ))}
+        <td>{columnTotals.reduce((acc, v) => acc + v)}</td>
+      </tr>
     </>
   );
 };
