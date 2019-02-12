@@ -1,0 +1,65 @@
+/** @format */
+
+*,
+*:after,
+*:before {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-family: 'Open Sans', sans-serif;
+}
+
+body {
+  font-family: inherit;
+}
+
+:root {
+  --color-white: #ffffff;
+  --color-white-dark: #dfdfdf;
+  --color-white-transparent: rgba(255,255,255,.9);
+
+  --color-red: #c31616;
+  --color-red-transparent: rgba(195, 22, 22, .9);
+
+  --color-grey: #787878;
+  --color-grey-dark: #4e4e4e;
+
+  --color-black: #000000;
+}
+
+.app {
+  height: 100vh;
+  width: 100%;
+  background-image: linear-gradient(
+      to bottom left,
+      var(--color-red-transparent),
+      var(--color-white-transparent)
+    ),
+    url('./assets/images/background.jpg');
+  background-size: cover;
+  display: flex;
+  flex-flow: column nowrap;
+}
+
+.app > main {
+  flex: 1;
+  width: 60%;
+  margin: 30px auto 0px auto;
+  background-color: var(--color-grey);
+  box-shadow: 0px 0px 4px 4px rgba(0,0,0,.2)
+}
+
+@media only screen and (max-width: 414px) {
+  .app > main {
+    width: 100%;
+    margin: 0;
+    box-shadow: none;
+  }
+}
+
+.app > footer {
+  height: 56px;
+}
