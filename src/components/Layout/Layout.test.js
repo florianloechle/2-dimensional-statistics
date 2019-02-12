@@ -28,12 +28,11 @@ describe('Layout Component', () => {
     expect(footer.length).toEqual(1);
   });
 
-  it('renders the children inside the main tag', () => {
+  it('renders the children', () => {
     const { getByTestId } = renderLayout({
       children: <div data-testid="content" />,
     });
 
-    const element = getByTestId('content');
-    expect(element.parentElement.tagName).toEqual('MAIN');
+    getByTestId('content');
   });
 });

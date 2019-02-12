@@ -10,7 +10,9 @@ const Layout = ({ children }) => {
   return (
     <div className={styles.base}>
       <Header />
-      <main>{children}</main>
+      <main>
+        <div className={styles.sheet}>{children}</div>
+      </main>
       <Footer />
     </div>
   );
