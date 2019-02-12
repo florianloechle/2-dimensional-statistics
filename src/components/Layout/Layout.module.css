@@ -1,0 +1,33 @@
+.base {
+  height: 100vh;
+  width: 100%;
+  background-image: linear-gradient(
+      to bottom left,
+      var(--color-red-transparent),
+      var(--color-white-transparent)
+    ),
+    url('../../assets/images/background.jpg');
+  background-size: cover;
+  display: flex;
+  flex-flow: column nowrap;
+}
+
+.base > main {
+  flex: 1;
+  width: 60%;
+  margin: 30px auto 0px auto;
+  background-color: var(--color-grey);
+  box-shadow: 0px 0px 4px 4px rgba(0,0,0,.2)
+}
+
+@media only screen and (max-width: 414px) {
+  .base > main {
+    width: 100%;
+    margin: 0;
+    box-shadow: none;
+  }
+}
+
+.base > footer {
+  height: 56px;
+}
