@@ -13,7 +13,9 @@ class StatisticApp extends React.Component {
   render() {
     return (
       <Layout>
-        <h1>Hello</h1>
+        <div className={styles.sheet}>
+          <span>{new Date().toLocaleString()}</span>
+        </div>
       </Layout>
     );
   }
