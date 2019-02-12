@@ -14,13 +14,14 @@ export default class Statistics {
    * ]
    *
    * @param {Array} samples     Two dimensional array
-   * @return {Statistics}
+   * @returns {Statistics}
    */
   constructor(samples) {
     if (!Array.isArray(samples)) {
       throw new TypeError('Expected the samples to be an array');
     }
 
+    this.numberOfValues = samples.length;
     this.samples = samples.reduce(
       (acc, [x, y]) => {
         acc.x.push(x);
@@ -30,36 +31,100 @@ export default class Statistics {
       },
       { x: [], y: [] }
     );
+
+    this._cache = new Map();
+    this._memoize = (key, fn) => {
+      if (this._cache.get(key)) return this._cache.get(key);
+      return this._cache.set(key, fn()).get(key);
+    };
   }
 
   /**
    * Returns the computed mean for both dimensions x and y
    * @property
-   * @return {Object}
+   * @returns {Object}
    */
   get mean() {
-    return {
+    return this._memoize('mean', () => ({
       x: Statistics.mean(this.samples.x),
       y: Statistics.mean(this.samples.y),
-    };
+    }));
   }
 
   /**
    * Returns the computed variance of both dimensions x and y
    * @property
+   * @returns {Object}
    */
   get variance() {
-    return {
+    return this._memoize('variance', () => ({
       x: Statistics.variance(this.samples.x),
       y: Statistics.variance(this.samples.y),
-    };
+    }));
+  }
+
+  /**
+   * Returns the computed convariance for values x and y
+   * @property
+   * @returns {Number}
+   */
+  get covariance() {
+    return this._memoize('covariance', () => {
+      const { x: meanX, y: meanY } = this.mean;
+      const { x, y } = this.samples;
+
+      let total = 0;
+      for (let i = 0; i < this.numberOfValues; i++) {
+        total += (x[i] - meanX) * (y[i] - meanY);
+      }
+      return (1 / (this.numberOfValues - 1)) * total;
+    });
+  }
+
+  /**
+   * Return the computed correlation Coefficient for values x and y
+   * @property
+   * @returns {Number}
+   */
+  get correlationCoefficient() {
+    return this._memoize('correlationCoefficient', () => {
+      const { x: varX, y: varY } = this.variance;
+      return this.covariance / Math.sqrt(varX * varY);
+    });
+  }
+
+  /**
+   * Returns the points of the regression line as objects
+   * with x and y properties.
+   * @property
+   * @returns {Array}
+   */
+  get regressionLine() {
+    return this._memoize('regressionLine', () => {
+      const { x } = this.variance;
+      const { x: meanX, y: meanY } = this.mean;
+      const m = this.covariance / x;
+      const b = meanY - m * meanX;
+
+      let points = [];
+      // i dont know if it makes sense to compute all points
+      // i think first and last should be sufficent to draw a line? :)
+      for (let i = 0; i < this.numberOfValues; i++) {
+        const x = this.samples.x[i];
+        const y = m * x + b;
+
+        points.push({ x, y });
+      }
+
+      return points;
+    });
   }
 
   /**
    * Calculates the mean value of all values in the proviced array.
-   *
+   * @static
    * @param {Array} samples
-   * @return {Number}
+   * @returns {Number}
    */
   static mean(samples) {
     return samples.reduce((acc, s) => acc + s) / samples.length;
@@ -67,11 +132,9 @@ export default class Statistics {
 
   /**
    * Calculates the variance of a sample of n values.
-   *
-   *
-   *
+   * @static
    * @param {Array} samples
-   * @return {Number}
+   * @returns {Number}
    */
   static variance(samples) {
     const mean = Statistics.mean(samples);

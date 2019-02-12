@@ -9,7 +9,7 @@
 ![](https://img.shields.io/codecov/c/schottilol/schottilol/2-dimensional-statistics.svg?colorB=red&style=flat)
 ![](https://img.shields.io/github/license/schottilol/2-dimensional-samples.svg?style=flat)
 
-A semester project by the stundents of the business informatics (WI16).  
+A semester project by the students of the business informatics (WI16B) course.  
 The goal is to create simple WebApp for basic statistical math.
 
 ## Installation 
