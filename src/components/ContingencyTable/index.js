@@ -5,23 +5,33 @@ import PropTypes from 'prop-types';
 import DataTable from './DataTable';
 import styles from './ContingencyTable.module.css';
 
-const MAX_ALLOWED_DATA_POINTS = 30;
-const MAX_ALLOWED_SUM = 100;
-
 export default class ContingencyTable extends React.Component {
+  static defaultProps = {
+    initalRows: 4,
+    initalColumns: 4,
+    maxSum: 100,
+    maxUniquePoints: 30,
+  };
+
   static propTypes = {
     initalRows: PropTypes.number,
 
     initalColumns: PropTypes.number,
 
-    onValueChanged: PropTypes.func,
+    maxUniquePoints: PropTypes.number,
+
+    maxSum: PropTypes.number,
+
+    onDataChange: PropTypes.func,
+
+    onError: PropTypes.func,
   };
 
   constructor(props) {
     super(props);
 
-    const columns = this.props.initalColumns || 4;
-    const rows = this.props.initalRows || 4;
+    const columns = this.props.initalColumns;
+    const rows = this.props.initalRows;
 
     this.state = {
       x: new Array(columns).fill(0),
@@ -29,7 +39,10 @@ export default class ContingencyTable extends React.Component {
       rows: Array.from({ length: rows }).map(() =>
         Array.from({ length: columns }).fill(0)
       ),
+      columnTotal: new Array(columns).fill(0),
+      rowTotal: new Array(rows).fill(0),
       errors: [],
+      overMaxSumError: false,
     };
 
     this.addRow = this.addRow.bind(this);
@@ -75,51 +88,86 @@ export default class ContingencyTable extends React.Component {
     });
   }
 
-  setValueError(row, index) {
-    return this.setState(state => {
-      const oldError = state.errors.find(
-        error => error[0] === row && error[1] === index
-      );
+  getValueErrors(row, index) {
+    const oldError = this.state.errors.find(
+      error => error[0] === row && error[1] === index
+    );
+    return oldError ? this.state.errors : [...this.state.errors, [row, index]];
+  }
 
-      return oldError ? null : { errors: [...state.errors, [row, index]] };
-    });
+  getCurrentTotals() {
+    const columnTotal = [];
+    const rowTotal = [];
+    let sum = 0;
+    let unqiuePoints = 0;
+    for (let i = 0; i < this.state.x.length; i++) {
+      for (let j = 0; j < this.state.y.length; j++) {
+        const value = this.state.rows[j][i];
+        if (typeof value !== 'number' && value > 0) {
+          continue;
+        }
+        columnTotal[i] = (columnTotal[i] || 0) + value;
+        rowTotal[j] = (rowTotal[j] || 0) + value;
+        sum = sum += value;
+        unqiuePoints++;
+      }
+    }
+    return {
+      columnTotal,
+      rowTotal,
+      sum,
+      uniquePointError: unqiuePoints > this.props.maxUniquePoints,
+    };
+  }
+
+  setNewState(newRows, newErrors, overMaxSum) {
+    this.setState(
+      state => {
+        return {
+          overMaxSumError: overMaxSum,
+          rows: newRows,
+          ...this.getCurrentTotals(),
+          errors: newErrors,
+        };
+      },
+      () => {
+        this.props.onDataChange &&
+          this.props.onDataChange({
+            rows: this.state.rows,
+            x: this.state.x,
+            y: this.state.y,
+            sum: this.state.sum,
+          });
+      }
+    );
   }
 
   handleDataValueChange = ({ target: { value } }, rowIndex, valueIndex) => {
     const input = value.replace(/,/g, '.');
-    const numberfied = Number(input);
+    const newValue = Number(input);
     const oldValue = this.state.rows[rowIndex][valueIndex];
+    const newRows = this.state.rows.slice();
+    const oldSum = this.state.sum;
 
-    if (Number.isNaN(numberfied)) {
-      return this.setValueError(rowIndex, valueIndex);
+    if (Number.isNaN(newValue)) {
+      newRows[rowIndex][valueIndex] = 0;
+
+      return this.setNewState(
+        newRows,
+        this.getValueErrors(rowIndex, valueIndex)
+      );
     }
 
-    const rows = this.state.rows.slice();
-    rows[rowIndex][valueIndex] = numberfied;
-    this.setState(state => {
-      return {
-        rows: rows,
-        errors: state.errors.filter(err => {
-          return err[0] !== rowIndex || err[1] !== valueIndex;
-        }),
-      };
+    const errors = this.state.errors.filter(err => {
+      return err[0] !== rowIndex || err[1] !== valueIndex;
     });
+    const overMaxSum = this.state.sum - oldValue + newValue > this.props.maxSum;
+    newRows[rowIndex][valueIndex] = newValue;
+
+    this.setNewState(newRows, errors, overMaxSum);
   };
 
   render() {
-    const columnTotals = [];
-    const rowTotals = [];
-    for (let i = 0; i < this.state.x.length; i++) {
-      for (let j = 0; j < this.state.y.length; j++) {
-        const value = this.state.rows[j][i];
-        if (typeof value !== 'number') {
-          continue;
-        }
-        columnTotals[i] = (columnTotals[i] || 0) + value;
-        rowTotals[j] = (rowTotals[j] || 0) + value;
-      }
-    }
-
     const yColumn = this.state.y.map((v, i) => (
       <th key={i} scope="row">
         <input defaultValue={v} onChange={this.handleChangeY} type="text" />
@@ -145,10 +193,11 @@ export default class ContingencyTable extends React.Component {
           <DataTable
             rows={this.state.rows}
             errors={this.state.errors}
+            sumError={this.state.overMaxSumError}
             onValueChange={this.handleDataValueChange}
             y={yColumn}
-            columnTotals={columnTotals}
-            rowTotals={rowTotals}
+            columnTotals={this.state.columnTotal}
+            rowTotals={this.state.rowTotal}
           />
         </tbody>
       </table>

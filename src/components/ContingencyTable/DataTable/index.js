@@ -13,10 +13,16 @@ const TableRow = ({
   <tr>
     {y}
     {row.map((value, valueIndex) => (
-      <td key={valueIndex}>
+      <td className="error" key={valueIndex}>
         <input
           style={
-            errors.includes(valueIndex) ? { border: 'solid 2px red' } : null
+            errors.includes(valueIndex)
+              ? {
+                  textDecoration: 'underline',
+                  textDecorationColor: 'red',
+                  color: 'red',
+                }
+              : null
           }
           placeholder="Wert.."
           type="text"
@@ -36,6 +42,7 @@ const DataTable = ({
   y = [],
   onValueChange,
   errors,
+  sumError,
 }) => {
   return (
     <>
@@ -61,7 +68,19 @@ const DataTable = ({
         {columnTotals.map((v, i) => (
           <td key={i}>{v}</td>
         ))}
-        <td>{columnTotals.reduce((acc, v) => acc + v)}</td>
+        <td
+          style={
+            sumError
+              ? {
+                  textDecoration: 'underline',
+                  textDecorationColor: 'red',
+                  color: 'red',
+                }
+              : null
+          }
+        >
+          {columnTotals.reduce((acc, v) => acc + v)}
+        </td>
       </tr>
     </>
   );
