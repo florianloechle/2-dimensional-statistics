@@ -17,35 +17,6 @@
   z-index: 1;
 }
 
-/* Desktops */
-@media only screen and (min-width: 1224px) {
-  .base > main {
-    width: 60%;
-    margin: 30px auto 0px auto;
-  }
-}
-
-/* Smartphones (portrait) ----------- */
-@media only screen and (max-width: 400px) {
-  .base > main {
-    width: 100%;
-    margin: 0;
-    box-shadow: none;
-  }
-}
-
-/* iPads (portrait and landscape) ----------- */
-@media only screen and (min-width: 768px) and (max-width: 1024px) {
-  .base > main {
-    width: 90%;
-    margin: auto;
-  }
-}
-
-.base > footer {
-  height: 56px;
-}
-
 .sheet {
   background-image: url('../../assets/images/paper.PNG');
   background-repeat: repeat;
@@ -78,3 +49,46 @@
   background-image: url('../../assets/images/paper.PNG');
   transform: rotate(-3deg);
 }
+
+/* Desktops */
+@media only screen and (min-width: 1224px) {
+  .base > main {
+    width: 60%;
+    margin: 30px auto 0px auto;
+  }
+  .sheet:after, .sheet:before {
+    display: block;
+  }
+}
+
+/* Smartphones (portrait) ----------- */
+@media only screen and (max-width: 400px) {
+  .base > main {
+    width: 100%;
+    margin: 0;
+    box-shadow: none;
+  }
+  .sheet:after, .sheet:before {
+    
+  }
+}
+
+/* Smartphones (landscape) ----------- */
+@media only screen and (min-width : 321px) and (max-width: 700px) {
+  .sheet:after, .sheet:before {
+    display: none;
+  }
+}
+
+/* iPads (portrait and landscape) ----------- */
+@media only screen and (min-width: 768px) and (max-width: 1024px) {
+  .base > main {
+    width: 90%;
+    margin: auto;
+  }
+  .sheet:after, .sheet:before {
+    display: none;
+  }
+}
+
+
