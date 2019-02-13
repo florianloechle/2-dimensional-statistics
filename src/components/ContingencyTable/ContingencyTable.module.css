@@ -1,5 +1,5 @@
 .base {
-  height: 200px;
+  min-height: 200px;
   text-align: center;
 }
 
@@ -14,12 +14,26 @@ tbody tr:last-child {
   border-top: 2px solid black;
 }
 
+tbody tr:first-child {
+  border-bottom: 2px solid black;
+}
+
 tr td:last-child {
   border-left: 2px solid black;
 }
 
 tr th:last-child {
   border-left: 2px solid black;
+}
+
+tr th:first-child {
+  border-right: 2px solid black;
+}
+
+.error {
+  text-decoration: underline;
+  text-decoration-color: red;
+  color: red;
 }
 
 /* Desktops */

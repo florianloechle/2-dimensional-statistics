@@ -22,7 +22,7 @@
   background-repeat: repeat;
   height: 100%;
   position: relative;
-  padding: 5px;
+  padding: 10px;
 }
 
 .sheet:before {

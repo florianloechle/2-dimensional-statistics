@@ -3,17 +3,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styles from './ContingencyTable.module.css';
+import { parseNumber, evaluateTable } from '../../lib/utils';
 
-const errorStyle = {
-  textDecoration: 'underline',
-  textDecorationColor: 'red',
-  color: 'red',
-};
+const TableCell = ({ type = 'td', ...rest }) =>
+  React.createElement(type, { ...rest });
 
-function parseValue(value) {
-  const input = value.replace(/,/g, '.');
-  return Number(input);
-}
+const TableRow = props => React.createElement('tr', { ...props });
 
 export default class ContingencyTable extends React.Component {
   static defaultProps = {
@@ -33,8 +28,6 @@ export default class ContingencyTable extends React.Component {
     maxSum: PropTypes.number,
 
     onDataChange: PropTypes.func,
-
-    onError: PropTypes.func,
   };
 
   constructor(props) {
@@ -109,50 +102,27 @@ export default class ContingencyTable extends React.Component {
     return oldError ? this.state.errors : [...this.state.errors, [row, index]];
   }
 
-  get currentTotals() {
-    const columnTotal = [];
-    const rowTotal = [];
-    let sum = 0;
-    let unqiuePoints = 0;
-    for (let i = 0; i < this.state.x.length; i++) {
-      for (let j = 0; j < this.state.y.length; j++) {
-        const value = this.state.rows[j][i];
-        if (typeof value !== 'number' && value > 0) {
-          continue;
-        }
-        columnTotal[i] = (columnTotal[i] || 0) + value;
-        rowTotal[j] = (rowTotal[j] || 0) + value;
-        sum = sum += value;
-        unqiuePoints++;
-      }
-    }
-    return {
-      columnTotal,
-      rowTotal,
-      sum,
-      uniquePointError: unqiuePoints > this.props.maxUniquePoints,
-    };
-  }
-
   setNewState(newRows, newErrors, overMaxSum) {
     this.setState(
       state => {
+        const { uniquePoints, ...totals } = evaluateTable(state.rows);
+
         return {
           overMaxSumError: overMaxSum,
           rows: newRows,
-          ...this.currentTotals,
+          ...totals,
           errors: newErrors,
+          uniquePointError: uniquePoints > this.props.maxUniquePoints,
         };
       },
       () => {
         this.props.onDataChange &&
           this.props.onDataChange({
-            ...this.state,
+            // should this return the table parsed as an array?
+            rows: this.state.rows,
+            uniquePointError: this.state.uniquePointError,
+            maxSumError: this.state.overMaxSumError,
           });
-
-        if (this.state.overMaxSumError && this.props.onError) {
-          this.props.onError();
-        }
       }
     );
   }
@@ -160,34 +130,34 @@ export default class ContingencyTable extends React.Component {
   get x() {
     const { x, xErrors } = this.state;
     return (
-      <tr>
-        <th>x / y</th>
+      <TableRow>
+        <TableCell type="th" scope="row" children="x / y" />
         {x.map((value, i) => (
-          <th key={i}>
+          <TableCell type="th" key={i}>
             <input
-              style={xErrors.includes(i) ? errorStyle : null}
+              className={xErrors.includes(i) ? styles.error : null}
               defaultValue={value}
               onChange={e => this.handleHeaderValueChange(e, 'x', i)}
               type="text"
             />
-          </th>
+          </TableCell>
         ))}
-        <th>Summen</th>
-      </tr>
+        <TableCell scope="row" children="Summen" />
+      </TableRow>
     );
   }
 
   get y() {
     const { y, yErrors } = this.state;
     return y.map((v, i) => (
-      <th key={i} scope="row">
+      <TableCell type="th" key={i} scope="col">
         <input
-          style={yErrors.includes(i) ? errorStyle : null}
+          className={yErrors.includes(i) ? styles.error : null}
           defaultValue={v}
           onChange={e => this.handleHeaderValueChange(e, 'y', i)}
           type="text"
         />
-      </th>
+      </TableCell>
     ));
   }
 
@@ -203,12 +173,12 @@ export default class ContingencyTable extends React.Component {
       );
 
       return (
-        <tr key={rowIndex}>
+        <TableRow key={rowIndex}>
           {y[rowIndex]}
           {row.map((value, valueIndex) => (
-            <td className="error" key={valueIndex}>
+            <TableCell key={valueIndex}>
               <input
-                style={rowErrors.includes(valueIndex) ? errorStyle : null}
+                className={rowErrors.includes(valueIndex) ? styles.error : null}
                 placeholder="Wert.."
                 type="text"
                 defaultValue={value}
@@ -216,21 +186,21 @@ export default class ContingencyTable extends React.Component {
                   this.handleDataValueChange(e, rowIndex, valueIndex)
                 }
               />
-            </td>
+            </TableCell>
           ))}
-          <td>{rowTotal[rowIndex]}</td>
-        </tr>
+          <TableCell>{rowTotal[rowIndex]}</TableCell>
+        </TableRow>
       );
     });
   }
 
   handleDataValueChange = ({ target: { value } }, rowIndex, valueIndex) => {
-    const newValue = parseValue(value);
+    const newValue = parseNumber(value);
     const oldValue = this.state.rows[rowIndex][valueIndex];
     const newRows = this.state.rows.slice();
     const oldSum = this.state.sum;
     const overMaxSum = oldSum - oldValue + newValue > this.props.maxSum;
-
+    console.log('hi');
     if (Number.isNaN(newValue)) {
       newRows[rowIndex][valueIndex] = 0;
 
@@ -257,21 +227,22 @@ export default class ContingencyTable extends React.Component {
     type,
     index
   ) {
-    const newValue = parseValue(value);
+    const newValue = parseNumber(value);
     const newHeader = this.state[type];
+    const typeErrors = this.state[type + 'Errors'];
 
     if (Number.isNaN(newValue)) {
       newHeader[index] = 0;
-      const error = this.state[type + 'Errors'].find(e => e === index)
+      const error = typeErrors.find(e => e === index)
         ? null
-        : [...this.state[type + 'Errors'], index];
+        : [...typeErrors, index];
 
       this.setState({
         [type + 'Errors']: error,
         [type]: newHeader,
       });
     } else {
-      const errors = this.state.xErrors.filter(err => {
+      const errors = typeErrors.filter(err => {
         return err !== index;
       });
       newHeader[index] = newValue;
@@ -283,22 +254,24 @@ export default class ContingencyTable extends React.Component {
   }
 
   render() {
-    const rows = this.rows;
-    const x = this.x;
+    const dataRows = this.rows;
+    const xRow = this.x;
     const { columnTotal, sum, overMaxSumError } = this.state;
 
     return (
       <table className={'table table-hover ' + styles.base}>
         <tbody>
-          {x}
-          {rows}
-          <tr>
-            <th>Summe</th>
+          {xRow}
+          {dataRows}
+          <TableRow>
+            <TableCell type="th">Summen</TableCell>
             {columnTotal.map((value, valueIndex) => (
-              <td key={valueIndex}>{value}</td>
+              <TableCell key={valueIndex}>{value}</TableCell>
             ))}
-            <td style={overMaxSumError ? errorStyle : null}>{sum}</td>
-          </tr>
+            <TableCell className={overMaxSumError ? styles.error : null}>
+              {sum}
+            </TableCell>
+          </TableRow>
         </tbody>
       </table>
     );
