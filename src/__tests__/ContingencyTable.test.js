@@ -52,10 +52,9 @@ describe('ContigencyTable', () => {
       expect(table).toHaveProperty('removeColumn');
       expect(table).toHaveProperty('addRow');
       expect(table).toHaveProperty('addColumn');
-      expect(table).toHaveProperty('rowCount');
-      expect(table).toHaveProperty('columnCount');
+      expect(table).toHaveProperty('totals');
       expect(ContingencyTable).toHaveProperty('createFromArray');
-      expect(table).toHaveProperty('addDataPoint');
+      expect(table).toHaveProperty('addOcurrency');
       expect(table).toHaveProperty('addXValue');
       expect(table).toHaveProperty('addYValue');
     });
@@ -93,7 +92,7 @@ describe('ContigencyTable', () => {
       it('correctly adds a new row to the table', () => {
         const table = new ContingencyTable({});
         table.addRow();
-        expect(table.rowCount).toEqual(2);
+        expect(table.rows.length).toEqual(2);
       });
 
       it('fills the newly added row with the provided default value', () => {
@@ -107,7 +106,7 @@ describe('ContigencyTable', () => {
       it('correctly removes a row from the table', () => {
         const table = new ContingencyTable({ initalRows: 2 });
         table.removeRow();
-        expect(table.rowCount).toEqual(1);
+        expect(table.rows.length).toEqual(2);
       });
     });
 
@@ -115,24 +114,25 @@ describe('ContigencyTable', () => {
       it('correctly adds a new column to the table', () => {
         const table = new ContingencyTable({});
         table.addColumn();
-        expect(table.columnCount).toEqual(2);
+        expect(table.rows.every(row => row.length === 1)).toEqual(true);
       });
 
       it('fills the newly added column with the provided default value', () => {
         const table = new ContingencyTable({});
-        table.addColumn(2);
+        table.addColumn();
 
         // i don't like this tbh maybe add an api to fetsch specific columns?
-        const column = table.rows.map(row =>
-          row.filter((v, i) => i === table.columnCount - 1)
+        const column = table.rows.reduce(
+          (acc, row) => [...acc, row[row.length - 1]],
+          []
         );
-        expect(column.every(v => v[0] === 2)).toEqual(true);
+        expect(column.every(v => v === 0)).toEqual(true);
       });
 
       it('correctly removes a column from the table', () => {
         const table = new ContingencyTable({ initalColumns: 2 });
         table.removeColumn();
-        expect(table.columnCount).toEqual(1);
+        expect(table.rows.every(row => row.length === 2)).toEqual(true);
       });
     });
 
@@ -140,9 +140,9 @@ describe('ContigencyTable', () => {
       const table = new ContingencyTable({});
 
       it('correcty adds and changes value of a data point', () => {
-        table.addDataPoint(2, 0, 0);
+        table.addOcurrency(2, 0, 0);
         expect(table.rows[0][0]).toEqual(2);
-        table.addDataPoint(1, 0, 0);
+        table.addOcurrency(1, 0, 0);
         expect(table.rows[0][0]).toEqual(1);
       });
 
@@ -162,16 +162,10 @@ describe('ContigencyTable', () => {
     });
 
     describe('Properties', () => {
-      it('returns the correct number of uniqueDataPoints in the table', () => {
-        const table = new ContingencyTable({ initalRows: 3, initalColumns: 3 });
-        expect(table.uniqueDataPoints).toEqual(0);
-        table.addDataPoint(3, 1, 1);
-        expect(table.uniqueDataPoints).toEqual(1);
-      });
-
       let table = new ContingencyTable({ initalRows: 3, initalColumns: 3 });
 
       describe('Totals', () => {
+        let count = 0;
         test.each`
           value | rowIndex | columnIndex | rowTotals    | columnTotals
           ${3}  | ${0}     | ${0}        | ${[3, 0, 0]} | ${[3, 0, 0]}
@@ -181,9 +175,13 @@ describe('ContigencyTable', () => {
           'computes rowTotals and columnTotlas after insertion of ' +
             '$value in row $rowIndex and column $columnIndex',
           ({ value, rowIndex, columnIndex, columnTotals, rowTotals }) => {
-            table.addDataPoint(value, rowIndex, columnIndex);
-            expect(table.columnTotals).toEqual(columnTotals);
-            expect(table.rowTotals).toEqual(rowTotals);
+            table.addOcurrency(value, rowIndex, columnIndex);
+            expect(table.totals).toEqual({
+              columnTotal: columnTotals,
+              rowTotal: rowTotals,
+              uniquePoints: ++count,
+              sum: rowTotals.reduce((acc, v) => acc + v),
+            });
           }
         );
       });
@@ -197,9 +195,6 @@ describe('ContigencyTable', () => {
             expect(table.rows).toEqual(expectedTable.occurences);
             expect(table.x).toEqual(expectedTable.x);
             expect(table.y).toEqual(expectedTable.y);
-            expect(table.uniqueDataPoints).toEqual(expectedUniquePoints);
-            expect(table.rowTotals).toEqual(expectedTotals.x);
-            expect(table.columnTotals).toEqual(expectedTotals.y);
           }
         );
       });

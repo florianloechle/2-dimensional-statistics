@@ -16,10 +16,6 @@
  *        0 0 0 0 0 0 0
  */
 
-// TODO: Since looping through the table always has O(n^2) runtime,
-// we should check if there is a better way to handle computing the
-// row and column totals as well as the unique data points.
-
 class ContingencyTable {
   /**
    * Constructs a new contigency table object
@@ -29,8 +25,8 @@ class ContingencyTable {
    * @returns {ContingencyTable}
    */
   constructor({ initalRows = 1, initalColumns = 1 } = {}) {
-    this._y = new Array(initalRows).fill(0);
-    this._x = new Array(initalColumns).fill(0);
+    this.y = new Array(initalRows).fill(0);
+    this.x = new Array(initalColumns).fill(0);
     this.rows = Array.from({ length: initalRows }).map(() =>
       Array.from({ length: initalColumns }).fill(0)
     );
@@ -49,10 +45,6 @@ class ContingencyTable {
         'Expected the argument to be an array. Got' + typeof sampleArray
       );
     }
-
-    // this whole algorithm feels very odd and kinda "hacky"
-    // i guess there are propably better ways to solve this.
-    // TODO: Make this more readable and efficent
 
     const uniqueXValues = [];
     const uniqueYValues = [];
@@ -94,7 +86,7 @@ class ContingencyTable {
 
     Object.keys(values).forEach(x => {
       Object.keys(values[x]).forEach(y => {
-        table.addDataPoint(
+        table.addOcurrency(
           values[x][y],
           table.y.indexOf(Number(y)),
           table.x.indexOf(Number(x))
@@ -105,95 +97,35 @@ class ContingencyTable {
     return table;
   }
 
-  /**
-   * Gets the current number of rows in the table.
-   * @property
-   * @returns {Number}  - The current number of rows
-   */
-  get rowCount() {
-    return this._y.length ? this._y.length : 0;
-  }
+  get totals() {
+    const columnTotal = [];
+    const rowTotal = [];
+    let sum = 0;
+    let uniquePoints = 0;
 
-  /**
-   * Gets the current number of columns in the table.
-   * @property
-   * @returns {Number}  - The current number of columns
-   */
-  get columnCount() {
-    return this._x.length ? this._x.length : 0;
-  }
-
-  /**
-   * Gets the current x values.
-   * @property
-   * @returns {Array}
-   */
-  get x() {
-    return this._x;
-  }
-
-  /**
-   * Gets the current y values.
-   * @property
-   * @returns {Array}
-   */
-  get y() {
-    return this._y;
-  }
-
-  /**
-   * Gets the computed value of unique data Points inside the table.
-   * @property
-   * @returns {Number} - The number of unique data points
-   */
-  get uniqueDataPoints() {
-    let dataPoints = 0;
-
-    for (let i = 0; i < this.rowCount; i++) {
-      const row = this.rows[i];
-
-      for (let j = 0; j < this.columnCount; j++) {
-        if (row[j] !== 0) {
-          dataPoints += 1;
+    if (this.rows.length !== 0) {
+      const firstRow = this.rows[0];
+      for (let i = 0; i < firstRow.length; i++) {
+        for (let j = 0; j < this.rows.length; j++) {
+          const value = this.rows[j][i];
+          if (typeof value !== 'number') {
+            continue;
+          }
+          columnTotal[i] = (columnTotal[i] || 0) + value;
+          rowTotal[j] = (rowTotal[j] || 0) + value;
+          sum = sum += value;
+          if (value !== 0) {
+            uniquePoints++;
+          }
         }
       }
     }
-
-    return dataPoints;
-  }
-
-  /**
-   * Gets the computed total of all rows in the table.
-   * @property
-   * @returns {Array} - The array containing the total for each row
-   */
-  get rowTotals() {
-    const rowTotals = new Array(this.rowCount).fill(0);
-    for (let i = 0; i < this.rowCount; i++) {
-      const row = this.rows[i];
-      for (let j = 0; j < this.columnCount; j++) {
-        rowTotals[i] += row[j];
-      }
-    }
-
-    return rowTotals;
-  }
-
-  /**
-   * Gets the computed total of all columns in the table.
-   * @property
-   * @returns {Array} - The array containing the total for each column
-   */
-  get columnTotals() {
-    const columnTotals = new Array(this.columnCount).fill(0);
-    for (let i = 0; i < this.columnCount; i++) {
-      for (let j = 0; j < this.rowCount; j++) {
-        const row = this.rows[j];
-        columnTotals[i] += row[i];
-      }
-    }
-
-    return columnTotals;
+    return {
+      columnTotal,
+      rowTotal,
+      sum,
+      uniquePoints,
+    };
   }
 
   /**
@@ -203,8 +135,9 @@ class ContingencyTable {
    * @param {Number} initialValue - The inital value for each item in the row
    */
   addRow(initialValue = 0) {
-    this._y.push(0);
+    this.y.push(0);
     this.rows.push(new Array(this.columnCount).fill(initialValue));
+    return this;
   }
 
   /**
@@ -214,10 +147,11 @@ class ContingencyTable {
    * @param {Number} initialValue - The inital value for each item in the column
    */
   addColumn(initialValue = 0) {
-    this._x.push(0);
+    this.x.push(0);
     for (let i = 0; i < this.rowCount; i++) {
       this.rows[i].push(initialValue);
     }
+    return this;
   }
 
   /**
@@ -229,9 +163,10 @@ class ContingencyTable {
    */
   removeRow(index = -1) {
     if (this.rowCount > 1) {
-      this._y.splice(index);
+      this.y.splice(index);
       this.rows.splice(index);
     }
+    return this;
   }
 
   /**
@@ -243,11 +178,12 @@ class ContingencyTable {
    */
   removeColumn(index = -1) {
     if (this.columnCount > 1) {
-      this._x.splice(index);
+      this.x.splice(index);
       for (let i = 0; i < this.rowCount; i++) {
         this.rows[i].splice(index);
       }
     }
+    return this;
   }
 
   /**
@@ -259,10 +195,11 @@ class ContingencyTable {
    * @param {Number} rowIndex - The index of the row the value should be inserted
    * @param {Number} columnIndex - The index of the column the value should be inserted
    */
-  addDataPoint(value, rowIndex, columnIndex) {
-    if (rowIndex < this.rowCount || columnIndex < this.columnCount) {
+  addOcurrency(value, rowIndex, columnIndex) {
+    if (rowIndex < this.x.length || columnIndex < this.y.length) {
       this.rows[rowIndex][columnIndex] = value;
     }
+    return this;
   }
 
   /**
@@ -273,8 +210,9 @@ class ContingencyTable {
    */
   addXValue(value, index) {
     if (index < this.x.length) {
-      this._x[index] = value;
+      this.x[index] = value;
     }
+    return this;
   }
 
   /**
@@ -285,8 +223,9 @@ class ContingencyTable {
    */
   addYValue(value, index) {
     if (index < this.y.length) {
-      this._y[index] = value;
+      this.y[index] = value;
     }
+    return this;
   }
 
   createArray() {

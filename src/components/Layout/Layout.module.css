@@ -1,0 +1,80 @@
+/** @format */
+
+.base {
+  height: 100vh;
+  width: 100%;
+  background-image: 
+    url('../../assets/images/background2.jpg');
+  background-size: cover;
+  display: flex;
+  flex-flow: column nowrap;
+}
+
+.base > main {
+  flex: 1;
+  position: relative;
+  background-color: var(--color-white);
+  z-index: 1;
+}
+
+/* Desktops */
+@media only screen and (min-width: 1224px) {
+  .base > main {
+    width: 60%;
+    margin: 30px auto 0px auto;
+  }
+}
+
+/* Smartphones (portrait) ----------- */
+@media only screen and (max-width: 400px) {
+  .base > main {
+    width: 100%;
+    margin: 0;
+    box-shadow: none;
+  }
+}
+
+/* iPads (portrait and landscape) ----------- */
+@media only screen and (min-width: 768px) and (max-width: 1024px) {
+  .base > main {
+    width: 90%;
+    margin: auto;
+  }
+}
+
+.base > footer {
+  height: 56px;
+}
+
+.sheet {
+  background-image: url('../../assets/images/paper.PNG');
+  background-repeat: repeat;
+  height: 100%;
+  position: relative;
+  padding: 5px;
+}
+
+.sheet:before {
+  z-index: -1;
+  position: absolute;
+  content: '';
+  top: 0;
+  left: -3px;
+  bottom: 0;
+  right: 0;
+  max-width: 50px;
+  background-image: url('../../assets/images/paper.PNG');
+  transform: rotate(-2deg);
+}
+
+.sheet:after {
+  z-index: -1;
+  position: absolute;
+  content: '';
+  top: 0;
+  bottom: 0;
+  right: -3px;
+  left: 0;
+  background-image: url('../../assets/images/paper.PNG');
+  transform: rotate(-3deg);
+}

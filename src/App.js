@@ -1,24 +1,25 @@
 /** @format */
 
 import React from 'react';
+import Layout from './components/Layout';
 import DotSequency from './components/DotSequency';
-import ContingencyInput from './components/ContingencyInput';
-import Footer from './components/Footer';
 import styles from './App.module.css';
+import Statistic from './lib/Statistics';
+import TextInput from './components/Input/Text';
 
 class StatisticApp extends React.Component {
   state = {
-    //
+    statistics: null,
   };
 
   render() {
     return (
-      <div className={styles.app}>
-        <main className="card">
-          <ContingencyInput />
-        </main>
-        <Footer />
-      </div>
+      <Layout>
+        <div className={styles.sheet}>
+          <span>{new Date().toLocaleString()}</span>
+          <TextInput placeHolder="X-Werte" />
+        </div>
+      </Layout>
     );
   }
 }
