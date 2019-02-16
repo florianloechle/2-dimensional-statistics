@@ -59,7 +59,7 @@ class StatisticApp extends React.Component {
     const { matrix, x, y } = data;
 
     this.setState({
-      statistic: Statistic.createFromTable(matrix, x, y),
+      statistic: new Statistic(Statistic.createFromTable(matrix, x, y)),
     });
   };
 

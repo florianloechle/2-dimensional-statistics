@@ -54,6 +54,8 @@ export default class ContingencyTable extends React.Component {
     this.addColumn = this.addColumn.bind(this);
     this.removeColumn = this.removeColumn.bind(this);
     this.handleDataValueChange = this.handleDataValueChange.bind(this);
+    this.reset = this.reset.bind(this);
+    this.calculateGraph = this.calculateGraph.bind(this);
   }
 
   addRow() {
@@ -263,7 +265,7 @@ export default class ContingencyTable extends React.Component {
     const { columnTotal, sum, overMaxSumError } = this.state;
 
     return (
-      <Layout.Container>
+      <div>
         <table className={'table table-hover ' + styles.base}>
           <tbody>
             {xRow}
@@ -285,7 +287,48 @@ export default class ContingencyTable extends React.Component {
             </TableRow>
           </tbody>
         </table>
-      </Layout.Container>
+        <br />
+        <button type="button" className="btn btn-warning" onClick={this.reset}>
+          Reset
+        </button>
+        <button
+          type="submit"
+          className="btn btn-primary"
+          onClick={this.calculateGraph}
+        >
+          Rechnen!
+        </button>
+      </div>
     );
+  }
+
+  reset() {
+    // todo: wont update browser view correctly
+    const columns = 2;
+    const rows = 2;
+
+    this.setState({
+      x: new Array(columns).fill(0),
+      y: new Array(rows).fill(0),
+      rows: Array.from({ length: rows }).map(() =>
+        Array.from({ length: columns }).fill(0)
+      ),
+      columnTotal: new Array(columns).fill(0),
+      rowTotal: new Array(rows).fill(0),
+      errors: [],
+      xErrors: [],
+      yErrors: [],
+      sum: 0,
+      overMaxSumError: false,
+      uniquePointError: false,
+    });
+  }
+
+  calculateGraph() {
+    this.props.onSubmit({
+      matrix: this.state.rows,
+      x: this.state.x,
+      y: this.state.y,
+    });
   }
 }

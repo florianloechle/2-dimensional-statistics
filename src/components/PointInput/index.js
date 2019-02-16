@@ -1,7 +1,6 @@
 /** @format */
 
 import React from 'react';
-import styles from './DotSequency.module.css';
 import Layout from '../Layout';
 
 export default class DotSequency extends React.Component {
@@ -17,6 +16,8 @@ export default class DotSequency extends React.Component {
 
     this.handlePointInputChange = this.handlePointInputChange.bind(this);
     this.handlePointInputOnBlur = this.handlePointInputOnBlur.bind(this);
+    this.reset = this.reset.bind(this);
+    this.calculateGraph = this.calculateGraph.bind(this);
   }
 
   render() {
@@ -28,6 +29,23 @@ export default class DotSequency extends React.Component {
       <div className="row">
         <div className="col-6">{this.renderInput()}</div>
         <div className="col-6">{this.renderList()}</div>
+        <div className="rightBottomDiv">
+          <br />
+          <button
+            type="button"
+            className="btn btn-warning"
+            onClick={this.reset}
+          >
+            Reset
+          </button>
+          <button
+            type="submit"
+            className="btn btn-primary"
+            onClick={this.calculateGraph}
+          >
+            Rechnen!
+          </button>
+        </div>
       </div>
     );
   }
@@ -71,9 +89,9 @@ export default class DotSequency extends React.Component {
     return this.state.statistics.map(([x, y], i) => (
       <li key={i}>
         {x} / {y}
-        <button className="edit" onClick={e => this.editRow(i)}>
+        {/* <button className="edit" onClick={e => this.editRow(i)}>
           <img src="./assets/images/edit.png" />
-        </button>
+        </button> */}
         <button className="delete" onClick={e => this.deleteRow(i)}>
           &times;
         </button>
@@ -119,8 +137,18 @@ export default class DotSequency extends React.Component {
     });
   }
 
-  editRow(index, x, y) {
-    var point = [x, y];
-    this.setState({});
+  // editRow(index, x, y) {
+  //   var point = [x, y];
+  //   this.setState({});
+  // }
+
+  calculateGraph() {
+    this.props.onSubmit(this.state.statistics);
+  }
+
+  reset() {
+    this.setState({
+      statistics: [],
+    });
   }
 }

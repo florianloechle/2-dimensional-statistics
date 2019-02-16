@@ -147,6 +147,10 @@ export default class Statistics {
       samples.reduce((acc, cur) => acc + Math.pow(cur - mean, 2), 0)
     );
   }
+
+  static createFromTable(matrix, x, y) {
+    return [[1, 1], [2, 2]];
+  }
 }
 
 // Alias
