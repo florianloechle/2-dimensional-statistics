@@ -149,7 +149,15 @@ export default class Statistics {
   }
 
   static createFromTable(matrix, x, y) {
-    return [[1, 1], [2, 2]];
+    const result = [];
+    for (let i = 0; i < y.length; i++) {
+      for (let j = 0; j < x.length; j++) {
+        for (let count = 0; count < matrix[j][i]; count++) {
+          result.push([x[j], y[i]]);
+        }
+      }
+    }
+    return result;
   }
 }
 
