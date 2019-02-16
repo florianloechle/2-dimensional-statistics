@@ -2,6 +2,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
+import Layout from '../Layout';
 import styles from './ContingencyTable.module.css';
 import { parseNumber, evaluateTable } from '../../lib/utils';
 
@@ -203,7 +204,7 @@ export default class ContingencyTable extends React.Component {
     const newRows = this.state.rows.slice();
     const oldSum = this.state.sum;
     const overMaxSum = oldSum - oldValue + newValue > this.props.maxSum;
-    console.log('hi');
+
     if (Number.isNaN(newValue)) {
       newRows[rowIndex][valueIndex] = 0;
 
@@ -262,27 +263,29 @@ export default class ContingencyTable extends React.Component {
     const { columnTotal, sum, overMaxSumError } = this.state;
 
     return (
-      <table className={'table table-hover ' + styles.base}>
-        <tbody>
-          {xRow}
-          {dataRows}
-          <TableRow>
-            <TableCell
-              className={styles.addButton}
-              type="th"
-              onClick={this.addRow}
-            >
-              +
-            </TableCell>
-            {columnTotal.map((value, valueIndex) => (
-              <TableCell key={valueIndex}>{value}</TableCell>
-            ))}
-            <TableCell className={overMaxSumError ? styles.error : null}>
-              {sum}
-            </TableCell>
-          </TableRow>
-        </tbody>
-      </table>
+      <Layout.Container>
+        <table className={'table table-hover ' + styles.base}>
+          <tbody>
+            {xRow}
+            {dataRows}
+            <TableRow>
+              <TableCell
+                className={styles.addButton}
+                type="th"
+                onClick={this.addRow}
+              >
+                +
+              </TableCell>
+              {columnTotal.map((value, valueIndex) => (
+                <TableCell key={valueIndex}>{value}</TableCell>
+              ))}
+              <TableCell className={overMaxSumError ? styles.error : null}>
+                {sum}
+              </TableCell>
+            </TableRow>
+          </tbody>
+        </table>
+      </Layout.Container>
     );
   }
 }

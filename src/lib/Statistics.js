@@ -21,6 +21,8 @@ export default class Statistics {
       throw new TypeError('Expected the samples to be an array');
     }
 
+    this.raw = samples;
+
     this.numberOfValues = samples.length;
     this.samples = samples.reduce(
       (acc, [x, y]) => {
@@ -89,7 +91,9 @@ export default class Statistics {
   get correlationCoefficient() {
     return this._memoize('correlationCoefficient', () => {
       const { x: varX, y: varY } = this.variance;
-      return this.covariance / Math.sqrt(varX * varY);
+      return this.covariance !== 0
+        ? this.covariance / Math.sqrt(varX * varY)
+        : 0;
     });
   }
 

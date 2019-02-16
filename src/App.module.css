@@ -34,14 +34,3 @@ body {
   --media-br-phone: 414px;
   --media-br-tablet: 876px;
 }
-
-.centerParent {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
-}
-
-.whiteBackground {
-  background-color: white;
-}

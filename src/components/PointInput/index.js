@@ -2,6 +2,7 @@
 
 import React from 'react';
 import styles from './DotSequency.module.css';
+import Layout from '../Layout';
 
 export default class DotSequency extends React.Component {
   constructor(props) {
@@ -19,7 +20,7 @@ export default class DotSequency extends React.Component {
   }
 
   render() {
-    return <div className="centerTable">{this.renderBox()}</div>;
+    return <Layout.Container>{this.renderBox()}</Layout.Container>;
   }
 
   renderBox() {
@@ -27,11 +28,6 @@ export default class DotSequency extends React.Component {
       <div className="row">
         <div className="col-6">{this.renderInput()}</div>
         <div className="col-6">{this.renderList()}</div>
-        <div className="rightBottomDiv">
-          <button type="button" className="btn btn-outline-primary">
-            Weiter
-          </button>
-        </div>
       </div>
     );
   }
@@ -101,11 +97,9 @@ export default class DotSequency extends React.Component {
     }
 
     if (negativeNumber) {
-      console.log('Negative: ' + value);
       value = '-' + value;
     }
 
-    console.log(value);
     this.setState({ [ev.target.id]: value });
   }
 
