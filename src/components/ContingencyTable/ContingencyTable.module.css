@@ -3,38 +3,48 @@
   text-align: center;
 }
 
-.base input, .base td, .base th {
+.row input, .row td, .row th, .row .addButton {
   text-align: inherit;
   outline: none;
   border: none;
   background: transparent;
+  padding: 0 !important;
 }
 
-tbody tr:last-child {
+.row:last-child {
   border-top: 2px solid black;
 }
 
-tbody tr:first-child {
+.row:first-child {
   border-bottom: 2px solid black;
 }
 
-tr td:last-child {
+.row td:last-child, .row th:last-child {
   border-left: 2px solid black;
+  position: relative;
 }
 
-tr th:last-child {
-  border-left: 2px solid black;
-}
-
-tr th:first-child {
+.row th:first-child {
   border-right: 2px solid black;
 }
 
+.addButton:hover {
+  background: rgba(0,0,0,.4);
+}
+
 .error {
+  background: rgba(255, 0, 0, 0.479) !important;
   text-decoration: underline;
   text-decoration-color: red;
   color: red;
 }
+
+.error input {
+  text-decoration: underline;
+  text-decoration-color: red;
+  color: red;
+}
+
 
 /* Desktops */
 @media only screen and (min-width: 1224px) {

@@ -54,7 +54,7 @@ describe('ContingencyTable Component', () => {
     });
   });
 
-  // figure otu a way to make this work
+  // figure out a way to make this work
   /* describe('Value Changes', () => {
     it('calls its onDataChange handler with the correct information', () => {
       const handler = jest.fn();

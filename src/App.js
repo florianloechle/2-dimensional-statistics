@@ -3,23 +3,47 @@
 import React from 'react';
 import Layout from './components/Layout';
 import DotSequency from './components/DotSequency';
-import styles from './App.module.css';
+import './App.module.css';
 import Statistic from './lib/Statistics';
-import TextInput from './components/Input/Text';
 import ContingencyTable from './components/ContingencyTable';
 
 class StatisticApp extends React.Component {
   state = {
-    statistics: null,
+    statistic: null,
+    tableIsActive: true,
+    isValidData: false,
+  };
+
+  toggleInput = () => {
+    this.setState(state => {
+      return {
+        tableisActive: !state.tableisActive,
+      };
+    });
+  };
+
+  handleTableDataChange = ({ matrix, x, y, overMaxSum, isValid }) => {
+    if (overMaxSum || !isValid) {
+      return;
+    }
+
+    this.setState({
+      isValidData: true,
+    });
   };
 
   render() {
+    const { tableIsActive } = this.state;
     return (
       <Layout>
-        <div className={styles.sheet}>
-          <span>{new Date().toLocaleString()}</span>
-          <ContingencyTable />
-        </div>
+        <span>{new Date().toLocaleString()}</span>
+        <Layout.Container>
+          {tableIsActive ? (
+            <ContingencyTable onDataChange={this.handleTableDataChange} />
+          ) : (
+            <DotSequency />
+          )}
+        </Layout.Container>
       </Layout>
     );
   }

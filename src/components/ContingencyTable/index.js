@@ -3,12 +3,19 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styles from './ContingencyTable.module.css';
-import { parseNumber, evaluateTable } from '../../lib/utils';
+import { parseNumber } from '../../lib/utils';
 
 const TableCell = ({ type = 'td', ...rest }) =>
   React.createElement(type, { ...rest });
 
-const TableRow = props => React.createElement('tr', { ...props });
+const TableRow = props =>
+  React.createElement('tr', { className: styles.row, ...props });
+
+const TableInput = props =>
+  React.createElement('input', { type: 'text', placeholder: 'Wert', ...props });
+
+const AddButton = props =>
+  React.createElement('button', { className: styles.addButton, ...props });
 
 export default class ContingencyTable extends React.Component {
   static defaultProps = {
@@ -27,7 +34,19 @@ export default class ContingencyTable extends React.Component {
 
     maxSum: PropTypes.number,
 
-    onDataChange: PropTypes.func,
+    onSubmit: PropTypes.func,
+  };
+
+  /**
+   * @enum
+   */
+  static actionTypes = {
+    __setOccurency: 0,
+    __setXValue: 1,
+    __setYValue: 2,
+    __setOccurencyError: 3,
+    __setXError: 4,
+    __setYError: 5,
   };
 
   constructor(props) {
@@ -39,17 +58,16 @@ export default class ContingencyTable extends React.Component {
     this.state = {
       x: new Array(columns).fill(0),
       y: new Array(rows).fill(0),
-      rows: Array.from({ length: rows }).map(() =>
+      matrix: Array.from({ length: rows }).map(() =>
         Array.from({ length: columns }).fill(0)
       ),
-      columnTotal: new Array(columns).fill(0),
-      rowTotal: new Array(rows).fill(0),
       errors: [],
       xErrors: [],
       yErrors: [],
+      rowTotal: new Array(rows).fill(0),
+      columnTotal: new Array(columns).fill(0),
       sum: 0,
-      overMaxSumError: false,
-      uniquePointError: false,
+      overMaxSum: false,
     };
 
     this.addRow = this.addRow.bind(this);
@@ -63,7 +81,8 @@ export default class ContingencyTable extends React.Component {
     this.setState(state => {
       return {
         y: [...state.y, 0],
-        rows: [...state.rows, new Array(state.x.length).fill(0)],
+        matrix: [...state.matrix, new Array(state.x.length).fill(0)],
+        rowTotal: [...state.rowTotal, 0],
       };
     });
   }
@@ -72,7 +91,8 @@ export default class ContingencyTable extends React.Component {
     this.setState(state => {
       return {
         y: state.y.slice(-1),
-        rows: state.rows.map(row => row.slice(-1)),
+        matrix: state.matrix.map(row => row.slice(-1)),
+        rowTotal: state.rowTotal.slice(-1),
       };
     });
   }
@@ -81,7 +101,8 @@ export default class ContingencyTable extends React.Component {
     this.setState(state => {
       return {
         x: [...state.x, 0],
-        rows: state.rows.map(row => [...row, 0]),
+        matrix: state.matrix.map(row => [...row, 0]),
+        columnTotal: [...state.columnTotal, 0],
       };
     });
   }
@@ -90,82 +111,157 @@ export default class ContingencyTable extends React.Component {
     this.setState(state => {
       return {
         x: state.x.slice(-1),
-        rows: state.rows.map(row => row.slice(-1)),
+        matrix: state.matrix.map(row => row.slice(-1)),
+        columnTotal: state.columnTotal.slice(-1),
       };
     });
   }
 
-  getValueErrors(row, index) {
-    const oldError = this.state.errors.find(
-      error => error[0] === row && error[1] === index
-    );
-    return oldError ? this.state.errors : [...this.state.errors, [row, index]];
-  }
+  getMatrixTotals(matrix) {
+    const columnTotal = [];
+    const rowTotal = [];
+    let sum = 0;
 
-  setNewState(newRows, newErrors, overMaxSum) {
-    this.setState(
-      state => {
-        const { uniquePoints, ...totals } = evaluateTable(state.rows);
-
-        return {
-          overMaxSumError: overMaxSum,
-          rows: newRows,
-          ...totals,
-          errors: newErrors,
-          uniquePointError: uniquePoints > this.props.maxUniquePoints,
-        };
-      },
-      () => {
-        this.props.onDataChange &&
-          this.props.onDataChange({
-            // should this return the table parsed as an array?
-            rows: this.state.rows,
-            uniquePointError: this.state.uniquePointError,
-            maxSumError: this.state.overMaxSumError,
-          });
+    if (matrix.length !== 0)
+      for (let i = 0; i < matrix[0].length; i++) {
+        for (let j = 0; j < matrix.length; j++) {
+          const value = matrix[j][i];
+          if (typeof value !== 'number') {
+            continue;
+          }
+          columnTotal[i] = (columnTotal[i] || 0) + value;
+          rowTotal[j] = (rowTotal[j] || 0) + value;
+          sum = sum += value;
+        }
       }
-    );
+
+    return {
+      columnTotal,
+      rowTotal,
+      sum,
+    };
   }
 
-  get x() {
-    const { x, xErrors } = this.state;
+  setMatrixReducer(action) {
+    return this.setState(({ matrix, errors, sum }) => {
+      const { rowIndex, columnIndex, value } = action.payload;
+
+      switch (action.type) {
+        case ContingencyTable.actionTypes.__setOccurency: {
+          const overMax =
+            sum - matrix[rowIndex][columnIndex] + value > this.props.maxSum;
+
+          matrix[rowIndex][columnIndex] = value;
+
+          return {
+            matrix,
+            ...this.getMatrixTotals(matrix),
+            overMaxSum: overMax,
+            errors: errors.filter(
+              err => err[0] !== rowIndex || err[1] !== columnIndex
+            ),
+          };
+        }
+        case ContingencyTable.actionTypes.__setOccurencyError: {
+          matrix[rowIndex][columnIndex] = value;
+          return {
+            matrix,
+            errors: [...errors, [rowIndex, columnIndex]],
+          };
+        }
+        default: {
+          throw new Error(
+            'This case should not happen and is likely caused by a bug in the component.'
+          );
+        }
+      }
+    });
+  }
+
+  setHeaderReducer(action) {
+    const { columnIndex, rowIndex, value } = action.payload;
+
+    return this.setState(({ x, xErrors, y, yErrors }) => {
+      switch (action.type) {
+        case ContingencyTable.actionTypes.__setXValue: {
+          x[columnIndex] = value;
+          return {
+            x: x,
+            xErrors: xErrors.filter(e => e !== columnIndex),
+          };
+        }
+        case ContingencyTable.actionTypes.__setXError: {
+          x[columnIndex] = value;
+          return {
+            x: x,
+            xErrors: [...xErrors, columnIndex],
+          };
+        }
+        case ContingencyTable.actionTypes.__setYValue: {
+          y[rowIndex] = value;
+          return {
+            x: x,
+            yErrors: yErrors.filter(e => e !== rowIndex),
+          };
+        }
+        case ContingencyTable.actionTypes.__setYError: {
+          y[rowIndex] = value;
+          return {
+            x: x,
+            yErrors: [...yErrors, rowIndex],
+          };
+        }
+        default: {
+          throw new Error(
+            'This case should not happen and is likely caused by a bug in the component.'
+          );
+        }
+      }
+    });
+  }
+
+  createXRow() {
+    const { x, xErrors, y } = this.state;
     return (
       <TableRow>
         <TableCell type="th" scope="row" children="x / y" />
         {x.map((value, i) => (
-          <TableCell type="th" key={i}>
-            <input
-              className={xErrors.includes(i) ? styles.error : null}
+          <TableCell
+            type="th"
+            key={i}
+            className={xErrors.includes(i) ? styles.error : null}
+          >
+            <TableInput
               defaultValue={value}
-              onChange={e => this.handleHeaderValueChange(e, 'x', i)}
-              type="text"
+              onChange={e => this.handleXValueChange(e, i)}
             />
           </TableCell>
         ))}
-        <TableCell scope="row" children="Summen" />
+        <TableCell type="th" scope="row">
+          Summen
+        </TableCell>
       </TableRow>
     );
   }
 
-  get y() {
+  createYColumn() {
     const { y, yErrors } = this.state;
     return y.map((v, i) => (
       <TableCell type="th" key={i} scope="col">
-        <input
+        <TableInput
           className={yErrors.includes(i) ? styles.error : null}
           defaultValue={v}
-          onChange={e => this.handleHeaderValueChange(e, 'y', i)}
-          type="text"
+          onChange={e => this.handleYValueChange(e, i)}
         />
       </TableCell>
     ));
   }
 
-  get rows() {
-    const { rows, rowTotal, errors } = this.state;
-    const y = this.y;
+  createMatrix() {
+    const { matrix, rowTotal, errors } = this.state;
+    const yColumn = this.createYColumn();
 
-    return rows.map((row, rowIndex) => {
+    return matrix.map((row, rowIndex) => {
       const rowErrors = errors.reduce(
         (err, position) =>
           position[0] === rowIndex ? [...err, position[1]] : err,
@@ -174,16 +270,16 @@ export default class ContingencyTable extends React.Component {
 
       return (
         <TableRow key={rowIndex}>
-          {y[rowIndex]}
-          {row.map((value, valueIndex) => (
-            <TableCell key={valueIndex}>
-              <input
-                className={rowErrors.includes(valueIndex) ? styles.error : null}
-                placeholder="Wert.."
-                type="text"
+          {yColumn[rowIndex]}
+          {row.map((value, columnIndex) => (
+            <TableCell
+              key={columnIndex}
+              className={rowErrors.includes(columnIndex) ? styles.error : null}
+            >
+              <TableInput
                 defaultValue={value}
                 onChange={e =>
-                  this.handleDataValueChange(e, rowIndex, valueIndex)
+                  this.handleDataValueChange(e, rowIndex, columnIndex)
                 }
               />
             </TableCell>
@@ -194,86 +290,104 @@ export default class ContingencyTable extends React.Component {
     });
   }
 
-  handleDataValueChange = ({ target: { value } }, rowIndex, valueIndex) => {
-    const newValue = parseNumber(value);
-    const oldValue = this.state.rows[rowIndex][valueIndex];
-    const newRows = this.state.rows.slice();
-    const oldSum = this.state.sum;
-    const overMaxSum = oldSum - oldValue + newValue > this.props.maxSum;
-    console.log('hi');
-    if (Number.isNaN(newValue)) {
-      newRows[rowIndex][valueIndex] = 0;
-
-      return this.setNewState(
-        newRows,
-        this.getValueErrors(rowIndex, valueIndex),
-        overMaxSum
-      );
-    }
-
-    const errors = this.state.errors.filter(err => {
-      return err[0] !== rowIndex || err[1] !== valueIndex;
-    });
-
-    newRows[rowIndex][valueIndex] = newValue;
-
-    this.setNewState(newRows, errors, overMaxSum);
-  };
-
-  handleHeaderValueChange(
-    {
-      target: { value },
-    },
-    type,
-    index
-  ) {
-    const newValue = parseNumber(value);
-    const newHeader = this.state[type];
-    const typeErrors = this.state[type + 'Errors'];
-
-    if (Number.isNaN(newValue)) {
-      newHeader[index] = 0;
-      const error = typeErrors.find(e => e === index)
-        ? null
-        : [...typeErrors, index];
-
-      this.setState({
-        [type + 'Errors']: error,
-        [type]: newHeader,
-      });
-    } else {
-      const errors = typeErrors.filter(err => {
-        return err !== index;
-      });
-      newHeader[index] = newValue;
-      this.setState({
-        [type + 'Errors']: errors,
-        [type]: newHeader,
-      });
-    }
+  isValid() {
+    return (
+      this.state.xErrors.length === 0 &&
+      this.state.yErrors.length === 0 &&
+      this.state.errors.length === 0
+    );
   }
 
+  handleDataValueChange = ({ target: { value } }, rowIndex, columnIndex) => {
+    const newValue = parseNumber(value);
+
+    if (isNaN(newValue) || value === '') {
+      return this.setMatrixReducer({
+        type: ContingencyTable.actionTypes.__setOccurencyError,
+        payload: {
+          rowIndex,
+          columnIndex,
+          value: 0,
+        },
+      });
+    }
+
+    return this.setMatrixReducer({
+      type: ContingencyTable.actionTypes.__setOccurency,
+      payload: {
+        rowIndex,
+        columnIndex,
+        value: newValue,
+      },
+    });
+  };
+
+  handleXValueChange = ({ target: { value } }, columnIndex) => {
+    const newValue = parseNumber(value);
+
+    if (isNaN(newValue) || value === '') {
+      return this.setHeaderReducer({
+        type: ContingencyTable.actionTypes.__setXError,
+        payload: {
+          columnIndex,
+          value: 0,
+        },
+      });
+    }
+
+    return this.setHeaderReducer({
+      type: ContingencyTable.actionTypes.__setXValue,
+      payload: {
+        columnIndex,
+        value: newValue,
+      },
+    });
+  };
+
+  handleYValueChange = ({ target: { value } }, rowIndex) => {
+    const newValue = parseNumber(value);
+
+    if (isNaN(newValue) || value === '') {
+      return this.setHeaderReducer({
+        type: ContingencyTable.actionTypes.__setYError,
+        payload: {
+          rowIndex,
+          value: 0,
+        },
+      });
+    }
+
+    return this.setHeaderReducer({
+      type: ContingencyTable.actionTypes.__setYValue,
+      payload: {
+        rowIndex,
+        value: newValue,
+      },
+    });
+  };
+
   render() {
-    const dataRows = this.rows;
-    const xRow = this.x;
-    const { columnTotal, sum, overMaxSumError } = this.state;
+    const { sum, columnTotal, overMaxSum } = this.state;
 
     return (
-      <table className={'table table-hover ' + styles.base}>
-        <tbody>
-          {xRow}
-          {dataRows}
-          <TableRow>
-            <TableCell type="th">Summen</TableCell>
-            {columnTotal.map((value, valueIndex) => (
-              <TableCell key={valueIndex}>{value}</TableCell>
-            ))}
-            <TableCell className={overMaxSumError ? styles.error : null}>
-              {sum}
-            </TableCell>
-          </TableRow>
-        </tbody>
-      </table>
+      <div>
+        <table className={'table table-hover ' + styles.base}>
+          <tbody>
+            {this.createXRow()}
+            {this.createMatrix()}
+            <TableRow>
+              <TableCell type="th">Summen</TableCell>
+              {columnTotal.map((value, valueIndex) => (
+                <TableCell key={valueIndex}>{value}</TableCell>
+              ))}
+              <TableCell className={overMaxSum ? styles.error : null}>
+                {sum}
+              </TableCell>
+            </TableRow>
+          </tbody>
+        </table>
+        <button onClick={this.validateInput} />
+      </div>
     );
   }
 }

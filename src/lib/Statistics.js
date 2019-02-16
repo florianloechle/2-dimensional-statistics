@@ -39,6 +39,8 @@ export default class Statistics {
     };
   }
 
+  static createFromTable(matrix, x, y) {}
+
   /**
    * Returns the computed mean for both dimensions x and y
    * @property

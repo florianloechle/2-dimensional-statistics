@@ -15,26 +15,4 @@ describe('Utils', () => {
       expect(utils.parseNumber(number)).toEqual(Number.NaN);
     });
   });
-
-  describe('Evaluate Table', () => {
-    const table = [[1, 1, 1, 1], [2, 0, 2, 1], [1, 1, 2, 1]];
-
-    it('returns an object with the right properties', () => {
-      const result = utils.evaluateTable(table);
-      expect(result).toBeInstanceOf(Object);
-      expect(result).toHaveProperty('columnTotal');
-      expect(result).toHaveProperty('rowTotal');
-      expect(result).toHaveProperty('sum');
-      expect(result).toHaveProperty('uniquePoints');
-    });
-
-    it('evaluats a table correctly and returns the correct values', () => {
-      expect(utils.evaluateTable(table)).toEqual({
-        columnTotal: [4, 2, 5, 3],
-        rowTotal: [4, 5, 5],
-        uniquePoints: 11,
-        sum: 14,
-      });
-    });
-  });
 });

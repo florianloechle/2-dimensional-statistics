@@ -3,6 +3,7 @@
 import React from 'react';
 import Footer from './Footer';
 import Header from './Header';
+import Container from './Container';
 import PropTypes from 'prop-types';
 import styles from './Layout.module.css';
 
@@ -17,6 +18,8 @@ const Layout = ({ children }) => {
     </div>
   );
 };
+
+Layout.Container = Container;
 
 export default Layout;
 
