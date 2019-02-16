@@ -2,12 +2,15 @@
 
 import React from 'react';
 import Layout from './components/Layout';
+import styles from './App.module.css';
 import DotSequency from './components/DotSequency';
 import ContingencyTable from './components/ContingencyTable';
 import SelectionToggle from './components/Toggle';
 import Statistic from './lib/Statistics';
 import StatisticView from './components/StatisticView';
 import './App.module.css';
+// import Statistic from './lib/Statistics';
+// import TextInput from './components/Input/Text';
 
 const providedSample = [
   [20, 0.2],
