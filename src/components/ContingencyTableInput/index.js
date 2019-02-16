@@ -24,7 +24,7 @@ export default class ContingencyTable extends React.Component {
     initalColumns: PropTypes.number,
     maxUniquePoints: PropTypes.number,
     maxSum: PropTypes.number,
-    onDataChange: PropTypes.func,
+    onSubmit: PropTypes.func,
   };
 
   constructor(props) {
@@ -48,17 +48,9 @@ export default class ContingencyTable extends React.Component {
       overMaxSumError: false,
       uniquePointError: false,
     };
-
-    this.addRow = this.addRow.bind(this);
-    this.removeRow = this.removeRow.bind(this);
-    this.addColumn = this.addColumn.bind(this);
-    this.removeColumn = this.removeColumn.bind(this);
-    this.handleDataValueChange = this.handleDataValueChange.bind(this);
-    this.reset = this.reset.bind(this);
-    this.calculateGraph = this.calculateGraph.bind(this);
   }
 
-  addRow() {
+  addRow = () => {
     this.setState(state => {
       return {
         y: [...state.y, 0],
@@ -66,18 +58,18 @@ export default class ContingencyTable extends React.Component {
         rowTotal: [...state.rowTotal, 0],
       };
     });
-  }
+  };
 
-  removeRow() {
+  removeRow = () => {
     this.setState(state => {
       return {
         y: state.y.slice(-1),
         rows: state.rows.map(row => row.slice(-1)),
       };
     });
-  }
+  };
 
-  addColumn() {
+  addColumn = () => {
     this.setState(state => {
       return {
         x: [...state.x, 0],
@@ -85,16 +77,16 @@ export default class ContingencyTable extends React.Component {
         columnTotal: [...state.columnTotal, 0],
       };
     });
-  }
+  };
 
-  removeColumn() {
+  removeColumn = () => {
     this.setState(state => {
       return {
         x: state.x.slice(-1),
         rows: state.rows.map(row => row.slice(-1)),
       };
     });
-  }
+  };
 
   getValueErrors(row, index) {
     const oldError = this.state.errors.find(
@@ -128,7 +120,7 @@ export default class ContingencyTable extends React.Component {
     );
   }
 
-  get x() {
+  createXRow() {
     const { x, xErrors } = this.state;
     return (
       <TableRow>
@@ -153,7 +145,7 @@ export default class ContingencyTable extends React.Component {
     );
   }
 
-  get y() {
+  createYColumn() {
     const { y, yErrors } = this.state;
     return y.map((v, i) => (
       <TableCell type="th" key={i} scope="col">
@@ -167,9 +159,9 @@ export default class ContingencyTable extends React.Component {
     ));
   }
 
-  get rows() {
+  createMatrix() {
     const { rows, rowTotal, errors } = this.state;
-    const y = this.y;
+    const y = this.createYColumn();
 
     return rows.map((row, rowIndex) => {
       const rowErrors = errors.reduce(
@@ -226,13 +218,7 @@ export default class ContingencyTable extends React.Component {
     this.setNewState(newRows, errors, overMaxSum);
   };
 
-  handleHeaderValueChange(
-    {
-      target: { value },
-    },
-    type,
-    index
-  ) {
+  handleHeaderValueChange = ({ target: { value } }, type, index) => {
     const newValue = parseNumber(value);
     const newHeader = this.state[type];
     const typeErrors = this.state[type + 'Errors'];
@@ -257,19 +243,17 @@ export default class ContingencyTable extends React.Component {
         [type]: newHeader,
       });
     }
-  }
+  };
 
   render() {
-    const dataRows = this.rows;
-    const xRow = this.x;
     const { columnTotal, sum, overMaxSumError } = this.state;
 
     return (
-      <div>
+      <Layout.Container>
         <table className={'table table-hover ' + styles.base}>
           <tbody>
-            {xRow}
-            {dataRows}
+            {this.createXRow()}
+            {this.createMatrix()}
             <TableRow>
               <TableCell
                 className={styles.addButton}
@@ -298,11 +282,11 @@ export default class ContingencyTable extends React.Component {
         >
           Rechnen!
         </button>
-      </div>
+      </Layout.Container>
     );
   }
 
-  reset() {
+  reset = () => {
     // todo: wont update browser view correctly
     const columns = 2;
     const rows = 2;
@@ -322,13 +306,13 @@ export default class ContingencyTable extends React.Component {
       overMaxSumError: false,
       uniquePointError: false,
     });
-  }
+  };
 
-  calculateGraph() {
+  calculateGraph = () => {
     this.props.onSubmit({
       matrix: this.state.rows,
       x: this.state.x,
       y: this.state.y,
     });
-  }
+  };
 }
