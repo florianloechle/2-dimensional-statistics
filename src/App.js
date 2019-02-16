@@ -2,15 +2,16 @@
 
 import React from 'react';
 import Layout from './components/Layout';
-import DotSequency from './components/DotSequency';
-import ContingencyTable from './components/ContingencyTable';
+import PointInput from './components/PointInput';
+import ContingencyTable from './components/ContingencyTableInput';
 import SelectionToggle from './components/Toggle';
 import Statistic from './lib/Statistics';
-import './App.module.css';
-// import styles from './App.module.css';
-// import Statistic from './lib/Statistics';
-// import TextInput from './components/Input/Text';
+import StatisticView from './components/StatisticView';
+import styles from './App.module.css';
 
+/**
+ * App component that hold the apps current state.
+ */
 class StatisticApp extends React.Component {
   state = {
     statistic: null,
@@ -48,12 +49,14 @@ class StatisticApp extends React.Component {
             onSubmit={this.handleData}
           />
         ) : (
-          <DotSequency onSubmit={this.handleData} />
+          <PointInput onSubmit={this.handleData} />
         )}
         {statistic !== null ? (
-          <div>{statistic.correlationCoefficient}</div>
+          <StatisticView statistic={statistic} />
         ) : (
-          <div>Keine Daten</div>
+          <div className={styles.notFound}>
+            <h2>Warte auf Daten...</h2>
+          </div>
         )}
       </Layout>
     );

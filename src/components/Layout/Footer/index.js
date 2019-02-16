@@ -3,6 +3,10 @@
 import React from 'react';
 import styles from './Footer.module.css';
 
+/**
+ * Component that renders the sites footer.
+ * @param {Object} props
+ */
 const Footer = props => {
   return (
     <footer className={styles.base}>

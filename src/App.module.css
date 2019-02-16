@@ -35,13 +35,7 @@ body {
   --media-br-tablet: 876px;
 }
 
-.centerParent {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
-}
-
-.whiteBackground {
-  background-color: white;
+.notFound {
+  margin: auto;
+  text-align: center;
 }
