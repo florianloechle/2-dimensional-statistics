@@ -19,7 +19,7 @@ class SelectionToggle extends React.Component {
 
   render() {
     return (
-      <div>
+      <div className={styles.base}>
         <span className="custom-control custom-radio">
           <input
             type="radio"
@@ -41,7 +41,7 @@ class SelectionToggle extends React.Component {
             id="checkContigencyTable"
             name="radioInput"
             className="custom-control-input"
-            onClick={_ => this.onChange(true)}
+            onChange={_ => this.onChange(true)}
           />
           <label
             className="custom-control-label"

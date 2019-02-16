@@ -1,0 +1,14 @@
+.base {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: space-evenly;
+  flex: 2;
+}
+
+.base div {
+  flex: 1;
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: center;
+  align-items: flex-start;
+}

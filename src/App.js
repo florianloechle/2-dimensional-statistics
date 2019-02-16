@@ -6,11 +6,40 @@ import DotSequency from './components/DotSequency';
 import ContingencyTable from './components/ContingencyTable';
 import SelectionToggle from './components/Toggle';
 import Statistic from './lib/Statistics';
+import StatisticView from './components/StatisticView';
 import './App.module.css';
+
+const providedSample = [
+  [20, 0.2],
+  [20, 0.3],
+  [30, 0.3],
+  [20, 0.3],
+  [30, 0.4],
+  [20, 0.1],
+  [30, 0.3],
+  [40, 0.3],
+  [10, 0.1],
+  [40, 0.2],
+  [30, 0.3],
+  [40, 0.3],
+  [30, 0.3],
+  [20, 0.1],
+  [30, 0.3],
+  [40, 0.3],
+  [30, 0.4],
+  [10, 0.1],
+  [20, 0.3],
+  [10, 0.2],
+  [30, 0.3],
+  [20, 0.3],
+  [10, 0.2],
+  [40, 0.3],
+  [30, 0.2],
+];
 
 class StatisticApp extends React.Component {
   state = {
-    statistic: null,
+    statistic: new Statistic(providedSample),
     tableIsActive: null,
   };
 
@@ -48,7 +77,7 @@ class StatisticApp extends React.Component {
           <DotSequency onSubmit={this.handleData} />
         )}
         {statistic !== null ? (
-          <div>Hier kommen die Daten rein</div>
+          <StatisticView statistic={statistic} />
         ) : (
           <div>Keine Daten</div>
         )}
