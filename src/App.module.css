@@ -41,3 +41,7 @@ body {
   align-items: center;
   height: 100%;
 }
+
+.whiteBackground {
+  background-color: white;
+}

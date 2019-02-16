@@ -67,13 +67,13 @@ class StatisticApp extends React.Component {
       return this.renderChoiceRadioButtons();
     } else if (this.state.userChoice === 1) {
       return (
-        <div>
+        <div className={styles.whiteBackground}>
           <DotSequency />
         </div>
       );
     } else if (this.state.userChoice === 2) {
       return (
-        <div>
+        <div className={styles.whiteBackground}>
           <ContingencyTable />
         </div>
       );
