@@ -1,7 +1,7 @@
 /** @format */
 
 import React from 'react';
-import styles from './Toggle.module.css';
+// import styles from './Toggle.module.css';
 
 class SelectionToggle extends React.Component {
   state = {
@@ -47,7 +47,7 @@ class SelectionToggle extends React.Component {
             className="custom-control-label"
             htmlFor="checkContigencyTable"
           >
-            Kontigenztafel
+            Kontingenztafel
           </label>
         </span>
       </div>

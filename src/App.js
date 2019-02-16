@@ -2,12 +2,12 @@
 
 import React from 'react';
 import Layout from './components/Layout';
-import styles from './App.module.css';
 import DotSequency from './components/DotSequency';
 import ContingencyTable from './components/ContingencyTable';
 import SelectionToggle from './components/Toggle';
 import Statistic from './lib/Statistics';
 import './App.module.css';
+// import styles from './App.module.css';
 // import Statistic from './lib/Statistics';
 // import TextInput from './components/Input/Text';
 
@@ -32,7 +32,7 @@ class StatisticApp extends React.Component {
     const { matrix, x, y } = data;
 
     this.setState({
-      statistic: Statistic.createFromTable(matrix, x, y),
+      statistic: new Statistic(Statistic.createFromTable(matrix, x, y)),
     });
   };
 
@@ -51,7 +51,7 @@ class StatisticApp extends React.Component {
           <DotSequency onSubmit={this.handleData} />
         )}
         {statistic !== null ? (
-          <div>Hier kommen die Daten rein</div>
+          <div>{statistic.correlationCoefficient}</div>
         ) : (
           <div>Keine Daten</div>
         )}
