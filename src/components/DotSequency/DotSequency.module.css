@@ -1,8 +1,22 @@
+.input-group{
+  background-color: green;
+  color: red;
+  width: 50px;
+}
+
 .delete {
-  float: right;
+  margin-left: 5px;
   font-weight: bold;
-  background: none;
-  font-size: 1em;
-  border: none;
-  position: relative;
+  background-color: red;
+  width: 30px;
 } 
+
+li{
+  list-style-type: none;
+  padding: 1px;
+}
+li button{
+  width: 100px;
+  padding-left: 5px;
+  padding-right: 5px;
+}

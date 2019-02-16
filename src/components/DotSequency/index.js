@@ -1,7 +1,7 @@
 /** @format */
 
 import React from 'react';
-// import styles from './DotSequency.module.css';
+import styles from './DotSequency.module.css';
 
 export default class DotSequency extends React.Component {
   constructor(props) {
@@ -88,11 +88,13 @@ export default class DotSequency extends React.Component {
   renderRows() {
     return this.state.statistics.map(([x, y], i) => (
       <li key={i}>
-        {x} / {y}
+        <button>
+          {x} / {y}
+        </button>
         {/* <button className="edit" onClick={e => this.editRow(i)}>
           <img src="./assets/images/edit.png" />
         </button> */}
-        <button className="delete" onClick={e => this.deleteRow(i)}>
+        <button className={styles.delete} onClick={e => this.deleteRow(i)}>
           &times;
         </button>
       </li>
@@ -115,11 +117,11 @@ export default class DotSequency extends React.Component {
     }
 
     if (negativeNumber) {
-      console.log('Negative: ' + value);
+      // console.log('Negative: ' + value);
       value = '-' + value;
     }
 
-    console.log(value);
+    // console.log(value);
     this.setState({ [ev.target.id]: value });
   }
 
