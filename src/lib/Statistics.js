@@ -148,7 +148,7 @@ export default class Statistics {
     const result = [];
     for (let i = 0; i < y.length; i++) {
       for (let j = 0; j < x.length; j++) {
-        for (let count = 0; count < matrix[j][i]; count++) {
+        for (let count = 0; count < matrix[i][j]; count++) {
           result.push([x[j], y[i]]);
         }
       }
