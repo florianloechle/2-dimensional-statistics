@@ -12,7 +12,7 @@ class StatisticApp extends React.Component {
   state = {
     statistics: null,
     userChoice: null,
-    //userChoice: 2
+    // userChoice: 2
   };
 
   setUserChoice(value) {
@@ -31,7 +31,7 @@ class StatisticApp extends React.Component {
                   id="checkDotSequence"
                   name="radioInput"
                   className="custom-control-input"
-                  value="2"
+                  value="1"
                   onClick={this.setUserChoice.bind(this, 1)}
                 />
                 <label className="custom-control-label" for="checkDotSequence">
@@ -45,7 +45,7 @@ class StatisticApp extends React.Component {
                   id="checkContigencyTable"
                   name="radioInput"
                   className="custom-control-input"
-                  value="1"
+                  value="2"
                   onClick={this.setUserChoice.bind(this, 2)}
                 />
                 <label

@@ -20,13 +20,9 @@ export default class ContingencyTable extends React.Component {
 
   static propTypes = {
     initalRows: PropTypes.number,
-
     initalColumns: PropTypes.number,
-
     maxUniquePoints: PropTypes.number,
-
     maxSum: PropTypes.number,
-
     onDataChange: PropTypes.func,
   };
 
@@ -64,6 +60,7 @@ export default class ContingencyTable extends React.Component {
       return {
         y: [...state.y, 0],
         rows: [...state.rows, new Array(state.x.length).fill(0)],
+        rowTotal: [...state.rowTotal, 0],
       };
     });
   }
@@ -82,6 +79,7 @@ export default class ContingencyTable extends React.Component {
       return {
         x: [...state.x, 0],
         rows: state.rows.map(row => [...row, 0]),
+        columnTotal: [...state.columnTotal, 0],
       };
     });
   }
@@ -142,7 +140,12 @@ export default class ContingencyTable extends React.Component {
             />
           </TableCell>
         ))}
-        <TableCell scope="row" children="Summen" />
+        <TableCell
+          className={styles.addButton}
+          onClick={this.addColumn}
+          scope="row"
+          children="+"
+        />
       </TableRow>
     );
   }
@@ -264,7 +267,13 @@ export default class ContingencyTable extends React.Component {
           {xRow}
           {dataRows}
           <TableRow>
-            <TableCell type="th">Summen</TableCell>
+            <TableCell
+              className={styles.addButton}
+              type="th"
+              onClick={this.addRow}
+            >
+              +
+            </TableCell>
             {columnTotal.map((value, valueIndex) => (
               <TableCell key={valueIndex}>{value}</TableCell>
             ))}
