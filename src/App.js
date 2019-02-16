@@ -3,87 +3,58 @@
 import React from 'react';
 import Layout from './components/Layout';
 import styles from './App.module.css';
+import DotSequency from './components/DotSequency';
 import ContingencyTable from './components/ContingencyTable';
-import DotSequency from './components/DotSequency/index.js';
+import SelectionToggle from './components/Toggle';
+import Statistic from './lib/Statistics';
+import './App.module.css';
 // import Statistic from './lib/Statistics';
 // import TextInput from './components/Input/Text';
 
 class StatisticApp extends React.Component {
   state = {
-    statistics: null,
-    userChoice: null,
-    // userChoice: 2
+    statistic: null,
+    tableIsActive: null,
   };
 
-  setUserChoice(value) {
-    this.setState({ userChoice: value });
-  }
+  handleInputSelection = tableIsActive => {
+    this.setState({
+      tableIsActive: tableIsActive,
+    });
+  };
 
-  renderChoiceRadioButtons() {
-    return (
-      <div>
-        <div>
-          <div className="card">
-            <div className="card-body">
-              <div className="custom-control custom-radio">
-                <input
-                  type="radio"
-                  id="checkDotSequence"
-                  name="radioInput"
-                  className="custom-control-input"
-                  value="1"
-                  onClick={this.setUserChoice.bind(this, 1)}
-                />
-                <label className="custom-control-label" for="checkDotSequence">
-                  Punktfolge
-                </label>
-              </div>
-
-              <div className="custom-control custom-radio">
-                <input
-                  type="radio"
-                  id="checkContigencyTable"
-                  name="radioInput"
-                  className="custom-control-input"
-                  value="2"
-                  onClick={this.setUserChoice.bind(this, 2)}
-                />
-                <label
-                  className="custom-control-label"
-                  for="checkContigencyTable"
-                >
-                  Kontigenztafel
-                </label>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  renderChoice() {
-    if (this.state.userChoice === null) {
-      return this.renderChoiceRadioButtons();
-    } else if (this.state.userChoice === 1) {
-      return (
-        <div className={styles.whiteBackground}>
-          <DotSequency />
-        </div>
-      );
-    } else if (this.state.userChoice === 2) {
-      return (
-        <div className={styles.whiteBackground}>
-          <ContingencyTable />
-        </div>
-      );
+  handleData = data => {
+    if (Array.isArray(data)) {
+      return this.setState({
+        statistic: new Statistic(data),
+      });
     }
-  }
+    const { matrix, x, y } = data;
+
+    this.setState({
+      statistic: Statistic.createFromTable(matrix, x, y),
+    });
+  };
 
   render() {
+    const { tableIsActive, statistic } = this.state;
     return (
       <Layout>
-        <div className={styles.centerParent}>{this.renderChoice()}</div>
+        <SelectionToggle onChange={this.handleInputSelection} />
+        {tableIsActive ? (
+          <ContingencyTable
+            initalRows={2}
+            initalColumns={2}
+            onSubmit={this.handleData}
+          />
+        ) : (
+          <DotSequency onSubmit={this.handleData} />
+        )}
+        {statistic !== null ? (
+          <div>Hier kommen die Daten rein</div>
+        ) : (
+          <div>Keine Daten</div>
+        )}
       </Layout>
     );
   }
