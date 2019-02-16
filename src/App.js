@@ -7,40 +7,14 @@ import ContingencyTable from './components/ContingencyTableInput';
 import SelectionToggle from './components/Toggle';
 import Statistic from './lib/Statistics';
 import StatisticView from './components/StatisticView';
-import './App.module.css';
+import styles from './App.module.css';
 
 /**
  * App component that hold the apps current state.
  */
 class StatisticApp extends React.Component {
   state = {
-    statistic: new Statistic([
-      [20, 0.2],
-      [20, 0.3],
-      [30, 0.3],
-      [20, 0.3],
-      [30, 0.4],
-      [20, 0.1],
-      [30, 0.3],
-      [40, 0.3],
-      [10, 0.1],
-      [40, 0.2],
-      [30, 0.3],
-      [40, 0.3],
-      [30, 0.3],
-      [20, 0.1],
-      [30, 0.3],
-      [40, 0.3],
-      [30, 0.4],
-      [10, 0.1],
-      [20, 0.3],
-      [10, 0.2],
-      [30, 0.3],
-      [20, 0.3],
-      [10, 0.2],
-      [40, 0.3],
-      [30, 0.2],
-    ]),
+    statistic: null,
     tableIsActive: null,
   };
 
@@ -80,7 +54,9 @@ class StatisticApp extends React.Component {
         {statistic !== null ? (
           <StatisticView statistic={statistic} />
         ) : (
-          <div>Keine Daten</div>
+          <div className={styles.notFound}>
+            <h2>Warte auf Daten...</h2>
+          </div>
         )}
       </Layout>
     );

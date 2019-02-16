@@ -34,3 +34,8 @@ body {
   --media-br-phone: 414px;
   --media-br-tablet: 876px;
 }
+
+.notFound {
+  margin: auto;
+  text-align: center;
+}
