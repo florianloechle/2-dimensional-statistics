@@ -2,9 +2,9 @@
 
 import React from 'react';
 import Layout from './components/Layout';
-import DotSequency from './components/DotSequency';
 import styles from './App.module.css';
 import ContingencyTable from './components/ContingencyTable';
+import DotSequency from './components/DotSequency/index.js';
 // import Statistic from './lib/Statistics';
 // import TextInput from './components/Input/Text';
 
@@ -87,17 +87,6 @@ class StatisticApp extends React.Component {
       </Layout>
     );
   }
-
-  // render() {
-  //   return (
-  //     <Layout>
-  //       <div className={styles.sheet}>
-  //         <span>{new Date().toLocaleString()}</span>
-  //         <ContingencyTable />
-  //       </div>
-  //     </Layout>
-  //   );
-  // }
 }
 
 export default StatisticApp;
