@@ -57,6 +57,53 @@ const Result = ({ header, values }) => (
   </div>
 );
 
+const ResultRegression = ({ header, values }) => (
+  <div>
+    <div className="input-group input-group-sm mb-3">
+      <div className="input-group-prepend">
+        <span className="input-group-text" id="inputGroup-sizing-sm">
+          {header}
+        </span>
+      </div>
+      <div className="input-group input-group-sm mb-3">
+        <div className="input-group-prepend">
+          <span className="input-group-text" id="inputGroup-sizing-sm">
+            m
+          </span>
+        </div>
+        <input
+          value={values.m}
+          type="text"
+          className="form-control"
+          aria-describedby="inputGroup-sizing-sm"
+        />
+        <div className="input-group-prepend">
+          <span className="input-group-text" id="inputGroup-sizing-sm">
+            b
+          </span>
+        </div>
+        <input
+          value={values.b}
+          type="text"
+          className="form-control"
+          aria-describedby="inputGroup-sizing-sm"
+        />
+        <div className="input-group-prepend">
+          <span className="input-group-text" id="inputGroup-sizing-sm">
+            Qualität B
+          </span>
+        </div>
+        <input
+          value={values.quality}
+          type="text"
+          className="form-control"
+          aria-describedby="inputGroup-sizing-sm"
+        />
+      </div>
+    </div>
+  </div>
+);
+
 const StatisticView = ({ statistic }) => (
   <Layout.Container>
     <br />
@@ -77,6 +124,10 @@ const StatisticView = ({ statistic }) => (
         <Result
           header="Korrelationskoeffizent"
           values={{ xy: statistic.correlationCoefficient }}
+        />
+        <ResultRegression
+          header="Regression"
+          values={statistic.regressionLineDetails}
         />
       </section>
       <div className="col">

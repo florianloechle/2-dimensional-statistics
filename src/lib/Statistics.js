@@ -125,6 +125,29 @@ export default class Statistics {
   }
 
   /**
+   * Return regression line details with quality
+   * @property
+   * @returns {Object}
+   */
+  get regressionLineDetails() {
+    return this._memoize('regressionLineDetails', () => {
+      const { x } = this.variance;
+      const { x: meanX, y: meanY } = this.mean;
+      const m = this.covariance / x;
+      const b = meanY - m * meanX;
+      const quality = Math.sqrt(this.correlationCoefficient);
+
+      let details = {
+        m: m,
+        b: b,
+        quality: quality,
+      };
+
+      return details;
+    });
+  }
+
+  /**
    * Calculates the mean value of all values in the proviced array.
    * @static
    * @param {Array} samples
