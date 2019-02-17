@@ -36,6 +36,8 @@ class SelectionToggle extends React.Component {
             </label>
           </span>
 
+          <span> &nbsp; &nbsp; &nbsp; </span>
+
           <span className="custom-control custom-radio">
             <input
               type="radio"
