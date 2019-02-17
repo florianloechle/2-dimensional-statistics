@@ -9,7 +9,8 @@ export default class DotSequency extends React.Component {
     super(props);
 
     this.state = {
-      statistics: [[1, 4], [2, 5], [3, 6]],
+      // statistics: [[1, 4], [2, 5], [3, 6]],
+      statistics: [[1.1, 2.4], [2, 5], [3, 6]],
       x: 0,
       y: 0,
       editRow: null,

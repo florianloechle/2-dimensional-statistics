@@ -9,9 +9,9 @@ const getData = (lineData, scatterData) => {
     datasets: [
       {
         type: 'scatter',
-        label: 'Verteilung',
+        label: 'Punkte',
         fill: false,
-        backgroundColor: 'white',
+        backgroundColor: 'blue',
         pointBorderColor: 'black',
         pointBackgroundColor: 'blue',
         pointBorderWidth: 2,
@@ -41,7 +41,7 @@ const getData = (lineData, scatterData) => {
 };
 
 const Chart = ({ scatterData, regressionLineData }) => (
-  <div>
+  <div style={{ backgroundColor: 'white' }}>
     <Scatter data={getData(regressionLineData, scatterData)} />
   </div>
 );

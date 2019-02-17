@@ -25,6 +25,12 @@ class StatisticApp extends React.Component {
   };
 
   handleData = data => {
+    if (data === -1) {
+      return this.setState({
+        statistic: null,
+      });
+    }
+
     if (Array.isArray(data)) {
       return this.setState({
         statistic: new Statistic(data),

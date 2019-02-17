@@ -5,6 +5,8 @@ import Chart from './Chart';
 import Layout from '../Layout';
 import './StatisticView.module.css';
 
+const roundDecimals = 6;
+
 const Result = ({ header, values }) => (
   <div>
     {Object.keys(values).length > 1 ? (
@@ -72,7 +74,7 @@ const ResultRegression = ({ header, values }) => (
           </span>
         </div>
         <input
-          value={values.m}
+          value={Number(values.m.toFixed(roundDecimals))}
           type="text"
           className="form-control"
           aria-describedby="inputGroup-sizing-sm"
@@ -83,7 +85,7 @@ const ResultRegression = ({ header, values }) => (
           </span>
         </div>
         <input
-          value={values.b}
+          value={Number(values.b.toFixed(roundDecimals))}
           type="text"
           className="form-control"
           aria-describedby="inputGroup-sizing-sm"
@@ -94,7 +96,7 @@ const ResultRegression = ({ header, values }) => (
           </span>
         </div>
         <input
-          value={values.quality}
+          value={Number(values.quality.toFixed(roundDecimals))}
           type="text"
           className="form-control"
           aria-describedby="inputGroup-sizing-sm"
@@ -114,16 +116,27 @@ const StatisticView = ({ statistic }) => (
         </header>
         <Result
           header="Mittelwerte"
-          values={{ x: statistic.mean.x, y: statistic.mean.y }}
+          values={{
+            x: Number(statistic.mean.x.toFixed(roundDecimals)),
+            y: Number(statistic.mean.y.toFixed(roundDecimals)),
+          }}
         />
         <Result
           header="Varianzen"
-          values={{ x: statistic.variance.x, y: statistic.variance.y }}
+          values={{
+            x: Number(statistic.variance.x.toFixed(roundDecimals)),
+            y: Number(statistic.variance.y.toFixed(roundDecimals)),
+          }}
         />
-        <Result header="Kovarianz" values={{ xy: statistic.covariance }} />
+        <Result
+          header="Kovarianz"
+          values={{ xy: Number(statistic.covariance.toFixed(roundDecimals)) }}
+        />
         <Result
           header="Korrelationskoeffizent"
-          values={{ xy: statistic.correlationCoefficient }}
+          values={{
+            xy: Number(statistic.correlationCoefficient.toFixed(roundDecimals)),
+          }}
         />
         <ResultRegression
           header="Regression"

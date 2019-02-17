@@ -309,10 +309,17 @@ export default class ContingencyTable extends React.Component {
   };
 
   calculateGraph = () => {
-    this.props.onSubmit({
-      matrix: this.state.rows,
-      x: this.state.x,
-      y: this.state.y,
-    });
+    if (
+      this.state.overMaxSumError === true ||
+      this.state.uniquePointError === true
+    ) {
+      this.props.onSubmit(-1);
+    } else {
+      this.props.onSubmit({
+        matrix: this.state.rows,
+        x: this.state.x,
+        y: this.state.y,
+      });
+    }
   };
 }
