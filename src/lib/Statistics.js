@@ -135,7 +135,7 @@ export default class Statistics {
       const { x: meanX, y: meanY } = this.mean;
       const m = this.covariance / x;
       const b = meanY - m * meanX;
-      const quality = Math.sqrt(this.correlationCoefficient);
+      const quality = Math.pow(this.correlationCoefficient, 2);
 
       let details = {
         m: m,
