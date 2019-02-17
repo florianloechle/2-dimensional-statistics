@@ -41,7 +41,7 @@ export default class DotSequency extends React.Component {
             Reset
           </button>
           <button
-            type="submit"
+            type="button"
             className="btn btn-primary"
             onClick={this.calculateGraph}
           >

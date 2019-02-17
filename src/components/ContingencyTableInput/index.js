@@ -99,7 +99,6 @@ export default class ContingencyTable extends React.Component {
     this.setState(
       state => {
         const { uniquePoints, ...totals } = evaluateTable(state.rows);
-
         return {
           overMaxSumError: overMaxSum,
           rows: newRows,
@@ -246,7 +245,7 @@ export default class ContingencyTable extends React.Component {
   };
 
   render() {
-    const { columnTotal, sum, overMaxSumError } = this.state;
+    const { columnTotal, sum, overMaxSumError, uniquePointError } = this.state;
 
     return (
       <Layout.Container>
@@ -265,7 +264,11 @@ export default class ContingencyTable extends React.Component {
               {columnTotal.map((value, valueIndex) => (
                 <TableCell key={valueIndex}>{value}</TableCell>
               ))}
-              <TableCell className={overMaxSumError ? styles.error : null}>
+              <TableCell
+                className={
+                  overMaxSumError || uniquePointError ? styles.error : null
+                }
+              >
                 {sum}
               </TableCell>
             </TableRow>
