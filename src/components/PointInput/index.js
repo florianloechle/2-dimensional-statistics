@@ -13,12 +13,20 @@ export default class DotSequency extends React.Component {
       x: 0,
       y: 0,
       editRow: null,
+      maxSum: 100,
+      maxUniquePoints: 30,
     };
 
     this.handlePointInputChange = this.handlePointInputChange.bind(this);
     this.handlePointInputOnBlur = this.handlePointInputOnBlur.bind(this);
     this.reset = this.reset.bind(this);
     this.calculateGraph = this.calculateGraph.bind(this);
+  }
+
+  countUnique() {
+    let set = new Set(this.state.statistics.map(JSON.stringify));
+    let arr2 = Array.from(set).map(JSON.parse);
+    return arr2.length;
   }
 
   render() {
@@ -39,7 +47,9 @@ export default class DotSequency extends React.Component {
           >
             Reset
           </button>
-          {this.state.statistics.length > 0 ? (
+          {this.state.statistics.length > 0 &&
+          this.state.statistics.length <= this.state.maxSum &&
+          this.countUnique() <= this.state.maxUniquePoints ? (
             <button
               type="button"
               className="btn btn-primary"
