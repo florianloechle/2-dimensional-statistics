@@ -2,10 +2,11 @@
 
 import React from 'react';
 import PointInput from './components/PointInput';
-import ContingencyTable from './components/ContingencyTable';
+import ContingencyTable from './components/ContingencyTableInput';
 import SelectionToggle from './components/Toggle';
-import Statistic from './lib/Statistics';
 import StatisticView from './components/StatisticView';
+
+import Statistic from './lib/Statistics';
 import styles from './App.module.css';
 import { CSSTransition } from 'react-transition-group';
 

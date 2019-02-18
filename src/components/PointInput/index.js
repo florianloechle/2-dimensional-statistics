@@ -1,11 +1,10 @@
 /** @format */
 
 import React from 'react';
-import styles from './DotSequency.module.css';
 import { Container, Col, Row } from '../Grid';
 import Controls from '../Controls';
 
-export default class DotSequency extends React.Component {
+class PointInput extends React.Component {
   state = {
     samples: [],
     x: 0,
@@ -107,16 +106,11 @@ export default class DotSequency extends React.Component {
           <Col className="col mb-2">
             <ul className="list-group list-group-horizontal-sm flex-wrap">
               {this.state.samples.map(([x, y], i) => (
-                <li key={i}>
+                <li className="list-group-item p-1" key={i}>
                   <button>
                     {x} / {y}
                   </button>
-                  <button
-                    className={styles.delete}
-                    onClick={e => this.deleteRow(i)}
-                  >
-                    &times;
-                  </button>
+                  <button onClick={e => this.deleteRow(i)}>&times;</button>
                 </li>
               ))}
             </ul>
@@ -134,3 +128,5 @@ export default class DotSequency extends React.Component {
     );
   }
 }
+
+export default PointInput;
