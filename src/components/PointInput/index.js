@@ -9,8 +9,7 @@ export default class DotSequency extends React.Component {
     super(props);
 
     this.state = {
-      // statistics: [[1, 4], [2, 5], [3, 6]],
-      statistics: [[1.1, 2.4], [2, 5], [3, 6]],
+      statistics: [[1, 2], [2, 2], [3, 1]],
       x: 0,
       y: 0,
       editRow: null,
@@ -40,13 +39,17 @@ export default class DotSequency extends React.Component {
           >
             Reset
           </button>
-          <button
-            type="button"
-            className="btn btn-primary"
-            onClick={this.calculateGraph}
-          >
-            Rechnen!
-          </button>
+          {this.state.statistics.length > 0 ? (
+            <button
+              type="button"
+              className="btn btn-primary"
+              onClick={this.calculateGraph}
+            >
+              Rechnen!
+            </button>
+          ) : (
+            ''
+          )}
         </div>
       </div>
     );
