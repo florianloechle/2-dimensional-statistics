@@ -17,6 +17,135 @@ body {
   cursor: url(http://www.rw-designer.com/cursor-extern.php?id=99805), auto;
 }
 
+.base {
+  min-height: 100vh;
+  width: 100%;
+  background-image: 
+    url('./assets/images/background2.jpg');
+  background-size: cover;
+  background-repeat: repeat; /* Do not repeat the image */
+  display: flex;
+  flex-flow: column nowrap;
+}
+
+.base > main {
+  flex: 1;
+  position: relative;
+  background-color: var(--color-white);
+  z-index: 1;
+  display: flex;
+  flex-flow: column nowrap;
+}
+
+.sheet {
+  background-image: url('./assets/images/paper2.jpg');
+  background-repeat: repeat;
+  height: 100%;
+  position: relative;
+  padding: 20px;
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: flex-start;
+  flex: 1;
+}
+
+.sheet:after, .sheet:before {
+  z-index: -1;
+  position: absolute;
+  content: '';
+  top: 0;
+  background-image: url('./assets/images/paper2.jpg');
+  bottom: 0;
+}
+
+.sheet:before {
+  left: -3px;
+  right: 0;
+  max-width: 50px;
+  transform: rotate(-2deg);
+}
+
+.sheet:after {
+  right: -3px;
+  left: 0;
+  transform: rotate(-3deg);
+}
+
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-flow: row nowrap;
+  padding: 2px 10px;
+  height: 56px;
+}
+
+.growIn {
+  opacity: 0;
+  transition: all 800ms linear;
+}
+
+.growIn-enter {
+  opacity: 0.01;
+  transition: all 700ms linear;
+}
+
+.growIn-enter-active {
+  opacity: 1;
+  transition: all 700ms linear;
+}
+
+.growIn-exit {
+  opacity: 1;
+  transition: all 700ms linear;
+}
+
+.growIn-exit-active {
+  transition: all 700ms linear;
+  opacity: 0;
+}
+
+/* Desktops */
+@media only screen and (min-width: 1224px) {
+  .base > main {
+    width: 50%;
+    margin: 30px auto 0px auto;
+  }
+  .sheet:after, .sheet:before {
+    display: block;
+  }
+}
+
+/* Smartphones (portrait) ----------- */
+@media only screen and (max-width: 400px) {
+  .base > main {
+    width: 100%;
+    margin: 0;
+    box-shadow: none;
+  }
+  .sheet {
+    padding: 0px;
+  }
+}
+
+/* Smartphones (landscape) ----------- */
+@media only screen and (min-width : 321px) and (max-width: 700px) {
+  .sheet:after, .sheet:before {
+    display: none;
+  }
+}
+
+/* iPads (portrait and landscape) ----------- */
+@media only screen and (min-width: 768px) and (max-width: 1024px) {
+  .base > main {
+    width: 90%;
+    margin: auto;
+  }
+  .sheet:after, .sheet:before {
+    display: none;
+  }
+}
+
 :root {
   --color-white: #ffffff;
   --color-white-dark: #dfdfdf;

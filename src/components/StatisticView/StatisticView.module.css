@@ -12,3 +12,12 @@
   justify-content: center;
   align-items: flex-start;
 }
+
+.noContent {
+  margin: auto;
+  font-size: 3rem;
+  text-align: center;
+  height: 300px;
+  width:100%;
+  vertical-align: middle;
+}

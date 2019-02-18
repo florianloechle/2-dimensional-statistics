@@ -1,94 +1,54 @@
 /** @format */
 
 import React from 'react';
-import Chart from './Chart';
-import Layout from '../Layout';
-import './StatisticView.module.css';
+import PropTypes from 'prop-types';
+import Statistic from '../../lib/Statistics';
+import { Container, Row, Col } from '../Grid';
+import StatisticDetails from './StatisticDetails';
+import StatisticChart from './StatisticChart';
+import styles from './StatisticView.module.css';
 
-const Result = ({ header, values }) => (
-  <div>
-    {Object.keys(values).length > 1 ? (
-      <div className="input-group input-group-sm mb-3">
-        <div className="input-group-prepend">
-          <span className="input-group-text" id="inputGroup-sizing-sm">
-            {header}
-          </span>
-        </div>
-        <div className="input-group input-group-sm mb-3">
-          <div className="input-group-prepend">
-            <span className="input-group-text" id="inputGroup-sizing-sm">
-              X
-            </span>
-          </div>
-          <input
-            value={values.x}
-            type="text"
-            className="form-control"
-            aria-describedby="inputGroup-sizing-sm"
-          />
-          <div className="input-group-prepend">
-            <span className="input-group-text" id="inputGroup-sizing-sm">
-              Y
-            </span>
-          </div>
-          <input
-            value={values.y}
-            type="text"
-            className="form-control"
-            aria-describedby="inputGroup-sizing-sm"
-          />
-        </div>
-      </div>
-    ) : (
-      <div className="input-group input-group-sm mb-3">
-        <div className="input-group-prepend">
-          <span className="input-group-text" id="inputGroup-sizing-sm">
-            {header}
-          </span>
-          <input
-            value={values.xy}
-            type="text"
-            className="form-control"
-            aria-describedby="inputGroup-sizing-sm"
-          />
-        </div>
-      </div>
-    )}
-  </div>
-);
+class StatisticView extends React.Component {
+  static propTypes = {
+    /**
+     * Instance of the statistics class.
+     */
+    statistic: PropTypes.instanceOf(Statistic),
+  };
 
-const StatisticView = ({ statistic }) => (
-  <Layout.Container>
-    <br />
-    <div className="row">
-      <section className="col">
-        <header>
-          <h2>Auswertung</h2>
-        </header>
-        <Result
-          header="Mittelwerte"
-          values={{ x: statistic.mean.x, y: statistic.mean.y }}
-        />
-        <Result
-          header="Varianzen"
-          values={{ x: statistic.variance.x, y: statistic.variance.y }}
-        />
-        <Result header="Kovarianz" values={{ xy: statistic.covariance }} />
-        <Result
-          header="Korrelationskoeffizent"
-          values={{ xy: statistic.correlationCoefficient }}
-        />
-      </section>
-      <div className="col">
-        <br />
-        <br />
-        <Chart
-          regressionLineData={statistic.regressionLine}
-          scatterData={statistic.raw.map(([x, y]) => ({ x, y }))}
-        />
-      </div>
-    </div>
-  </Layout.Container>
-);
+  render() {
+    const { statistic } = this.props;
+
+    return (
+      <Container fluid className="mt-2">
+        <Row className="align-items-center">
+          {statistic ? (
+            <>
+              <Col className="col-3">
+                <StatisticDetails
+                  mean={statistic.mean}
+                  variance={statistic.variance}
+                  covariance={statistic.covariance}
+                  correlationCoefficient={statistic.correlationCoefficient}
+                  regression={statistic.regressionLine}
+                />
+              </Col>
+              <Col className="col-9">
+                <StatisticChart
+                  regressionLineData={statistic.regressionLine}
+                  scatterData={statistic.samples}
+                />
+              </Col>{' '}
+            </>
+          ) : (
+            <Col className="col-6">
+              <div className={styles.noContent}>404 Student ist faul.</div>
+            </Col>
+          )}
+        </Row>
+      </Container>
+    );
+  }
+}
 
 export default StatisticView;

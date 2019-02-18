@@ -1,8 +1,0 @@
-.base {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  flex-flow: row nowrap;
-  padding: 2px 10px;
-  height: 56px;
-}

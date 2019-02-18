@@ -6,10 +6,19 @@
  * @param {String} value
  * @returns {*}
  */
-
 export function parseNumber(value) {
+  if (typeof value === 'number') return value;
   const input = value.replace(/,/g, '.');
   return Number(input);
+}
+
+/**
+ * Compare function to sort an of numbers in acending order.
+ * @param {Number} a
+ * @param {Number} b
+ */
+export function sortAscending(a, b) {
+  return a < b ? -1 : 1;
 }
 
 /**
@@ -22,7 +31,6 @@ export function evaluateTable(table) {
   const columnTotal = [];
   const rowTotal = [];
   let sum = 0;
-  let uniquePoints = 0;
 
   if (table.length !== 0) {
     const firstRow = table[0];
@@ -35,9 +43,6 @@ export function evaluateTable(table) {
         columnTotal[i] = (columnTotal[i] || 0) + value;
         rowTotal[j] = (rowTotal[j] || 0) + value;
         sum = sum += value;
-        if (value !== 0) {
-          uniquePoints++;
-        }
       }
     }
   }
@@ -46,6 +51,5 @@ export function evaluateTable(table) {
     columnTotal,
     rowTotal,
     sum,
-    uniquePoints,
   };
 }

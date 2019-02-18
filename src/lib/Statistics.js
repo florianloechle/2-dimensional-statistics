@@ -1,5 +1,7 @@
 /** @format */
 
+import { sortAscending } from './utils';
+
 export default class Statistics {
   /**
    * Constructs a new statistics object to get
@@ -20,8 +22,6 @@ export default class Statistics {
     if (!Array.isArray(samples)) {
       throw new TypeError('Expected the samples to be an array');
     }
-
-    this.raw = samples;
 
     this.numberOfValues = samples.length;
     this.samples = samples.reduce(
@@ -105,22 +105,20 @@ export default class Statistics {
    */
   get regressionLine() {
     return this._memoize('regressionLine', () => {
-      const { x } = this.variance;
+      const { x: sX } = this.variance;
       const { x: meanX, y: meanY } = this.mean;
-      const m = this.covariance / x;
+      const m = this.covariance / sX;
       const b = meanY - m * meanX;
-
+      const quality = Math.pow(this.correlationCoefficient, 2);
+      const xSamples = this.samples.x.sort(sortAscending);
       let points = [];
-      // i dont know if it makes sense to compute all points
-      // i think first and last should be sufficent to draw a line? :)
-      for (let i = 0; i < this.numberOfValues; i++) {
-        const x = this.samples.x[i];
-        const y = m * x + b;
 
+      for (let i = 0; i < this.numberOfValues; i++) {
+        const x = xSamples[i];
+        const y = m * x + b;
         points.push({ x, y });
       }
-
-      return points;
+      return { points, m, b, quality };
     });
   }
 
@@ -131,7 +129,7 @@ export default class Statistics {
    * @returns {Number}
    */
   static mean(samples) {
-    return samples.reduce((acc, s) => acc + s) / samples.length;
+    return samples.reduce((acc, v) => acc + v) / samples.length;
   }
 
   /**

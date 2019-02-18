@@ -1,0 +1,63 @@
+/** @format */
+
+.table {
+  border-bottom: 5px solid var(--color-white);
+}
+
+.row td,
+.row th {
+  text-align: center;
+  outline: none;
+  border: none;
+  max-width: 50px;
+}
+
+.row input {
+  text-align: center;
+  width: 100%;
+}
+
+.error {
+  text-decoration: underline;
+  text-decoration-color: red;
+  color: red;
+}
+
+/* Desktops */
+@media only screen and (min-width: 1224px) {
+  .table td,
+  .table th {
+    font-size: 1rem;
+  }
+}
+
+/* Smartphones (portrait) ----------- */
+@media only screen and (max-width: 400px) {
+  .table td,
+  .table th {
+    font-size: 0.7rem;
+  }
+
+  .table {
+    min-width: 100px;
+    max-width: 100%;
+    max-height: 400px;
+  }
+  
+}
+
+/* Smartphones (landscape) ----------- */
+@media only screen and (min-width: 321px) and (max-width: 700px) {
+  .table td,
+  .table th {
+    font-size: 0.7rem;
+  }
+}
+
+/* iPads (portrait and landscape) ----------- */
+@media only screen and (min-width: 768px) and (max-width: 1024px) {
+  .table td,
+  .table th {
+    font-size: 1rem;
+  }
+}
