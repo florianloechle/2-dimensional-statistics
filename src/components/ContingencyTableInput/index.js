@@ -278,13 +278,19 @@ export default class ContingencyTable extends React.Component {
         <button type="button" className="btn btn-warning" onClick={this.reset}>
           Reset
         </button>
-        <button
-          type="submit"
-          className="btn btn-primary"
-          onClick={this.calculateGraph}
-        >
-          Rechnen!
-        </button>
+        {this.state.sum > 0 &&
+        !this.state.overMaxSumError &&
+        !this.state.uniquePointError ? (
+          <button
+            type="submit"
+            className="btn btn-primary"
+            onClick={this.calculateGraph}
+          >
+            Rechnen!
+          </button>
+        ) : (
+          ''
+        )}
       </Layout.Container>
     );
   }
