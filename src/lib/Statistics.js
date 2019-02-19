@@ -15,14 +15,19 @@ export default class Statistics {
    *  [4,8]
    * ]
    *
-   * @param {Array} samples     Two dimensional array
+   * @param {Matrix} samples     Two dimensional array
    * @returns {Statistics}
    */
   constructor(samples) {
+    // check if possibly matrix
     if (!Array.isArray(samples)) {
-      throw new TypeError('Expected the samples to be an array');
+      // check if defininetly matrix
+      if (!Array.isArray(samples[0])) {
+        throw new TypeError('Expected the samples to be an array');
+      }
     }
 
+    //  save the number of poinst in the matrix
     this.numberOfValues = samples.length;
     this.samples = samples.reduce(
       (acc, [x, y]) => {
@@ -34,6 +39,8 @@ export default class Statistics {
       { x: [], y: [] }
     );
 
+    // since we need stuff like mean etc. repeatedly
+    // we just cache the results and avoid unnecessary recomputations.
     this._cache = new Map();
     this._memoize = (key, fn) => {
       if (this._cache.get(key)) return this._cache.get(key);
@@ -146,16 +153,23 @@ export default class Statistics {
     );
   }
 
+  /**
+   * Factory function to construct a new statistics object
+   * given matrix of occurrences and x and y data values.
+   * @param {Matrix} matrix
+   * @param {Array} x
+   * @param {Array} y
+   * @returns {Statistics}
+   */
   static createFromTable(matrix, x, y) {
-    const result = [];
-    for (let i = 0; i < y.length; i++) {
-      for (let j = 0; j < x.length; j++) {
-        for (let count = 0; count < matrix[i][j]; count++) {
-          result.push([x[j], y[i]]);
-        }
+    let result = [];
+    for (let i = 0; i < matrix.length; i++) {
+      for (let j = 0; j < matrix[i].length; j++) {
+        const occurrence = matrix[i][j];
+        result = [...result, new Array(occurrence).fill([x[i], [y[j]]])];
       }
     }
-    return result;
+    return new Statistics(result);
   }
 }
 

@@ -34,7 +34,7 @@ class StatisticApp extends React.Component {
     const { matrix, x, y } = data;
 
     this.setState({
-      statistic: new Statistic(Statistic.createFromTable(matrix, x, y)),
+      statistic: Statistic.createFromTable(matrix, x, y),
     });
   };
 
@@ -50,7 +50,7 @@ class StatisticApp extends React.Component {
       <div className={styles.base}>
         <header className={styles.header} />
         <main>
-          <div className={styles.sheet} {...this.props}>
+          <div className={styles.sheet}>
             <SelectionToggle onChange={this.handleInputSelection} />
             {tableIsActive ? (
               <ContingencyTable

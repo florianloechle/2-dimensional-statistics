@@ -71,6 +71,7 @@ describe('The Statistics class', () => {
   describe('Variance', () => {
     test.each`
       oneDimensionSample       | expected
+      ${[0, 0]}                | ${0}
       ${oneDimensionSample[0]} | ${0}
       ${oneDimensionSample[1]} | ${78.88889}
       ${oneDimensionSample[2]} | ${132.22222}
@@ -87,6 +88,16 @@ describe('The Statistics class', () => {
   describe('Initilization', () => {
     it('inititalizes with a multidimensional array', () => {
       expect(() => new Statistics(providedSample)).not.toThrow();
+    });
+
+    it('creates a new Statistic object with the factory function', () => {
+      const matrix = [[1, 2]];
+      const x = [1, 2];
+      const y = [0.5, 1];
+      let stats = null;
+      expect(() => {
+        stats = Statistics.createFromTable(matrix, x, y);
+      }).not.toThrow();
     });
   });
 
