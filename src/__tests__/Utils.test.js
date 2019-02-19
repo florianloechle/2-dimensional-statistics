@@ -16,6 +16,16 @@ describe('Utils', () => {
     });
   });
 
+  describe('mapMatrix', () => {
+    const matrix = [[0, 0], [0, 0]];
+
+    it('maps the return value to each matrix element', () => {
+      expect(
+        utils.mapMatrix(matrix, (value, rowIndex, columnIndex) => value + 1)
+      ).toEqual([[1, 1], [1, 1]]);
+    });
+  });
+
   describe('Evaluate Table', () => {
     const table = [[1, 1, 1, 1], [2, 0, 2, 1], [1, 1, 2, 1]];
 
