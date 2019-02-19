@@ -1,5 +1,14 @@
 /** @format */
 
+/**
+ * This file contians some helper layout components to create a
+ * bootstrap grid layout. Columns must be nested in rows, rows must be
+ * nested in containers. Container can either be fluid.
+ *
+ * To see what can be done with these components visit:
+ * https://getbootstrap.com/docs/4.3/layout/grid/
+ */
+
 import React from 'react';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
