@@ -13,7 +13,7 @@ class SelectionToggle extends React.Component {
       {
         active: newState,
       },
-      () => this.props.onChange(this.state.active)
+      () => this.props.onChange && this.props.onChange(this.state.active)
     );
   };
 
@@ -52,7 +52,7 @@ class SelectionToggle extends React.Component {
                 className="custom-control-label"
                 htmlFor="checkContigencyTable"
               >
-                Kontigenztafel
+                Kontingenztafel
               </label>
             </span>
           </Col>
