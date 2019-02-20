@@ -13,7 +13,7 @@ const getData = (lineData, scatterData) => {
         fill: false,
         backgroundColor: 'white',
         pointBorderColor: 'black',
-        pointBackgroundColor: 'blue',
+        pointBackgroundColor: 'red',
         pointBorderWidth: 2,
         pointHoverRadius: 6,
         pointHoverBackgroundColor: 'darkblue',

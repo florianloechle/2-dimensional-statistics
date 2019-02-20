@@ -29,6 +29,7 @@ export default class Statistics {
 
     //  save the number of poinst in the matrix
     this.numberOfValues = samples.length;
+    this.raw = samples;
     this.samples = samples.reduce(
       (acc, [x, y]) => {
         acc.x.push(x);

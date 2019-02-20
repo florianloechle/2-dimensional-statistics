@@ -4,6 +4,22 @@ import React from 'react';
 import { Container, Col, Row } from '../Grid';
 import Controls from '../Controls';
 
+function PointItem({ x, y, onDelete, onEdit }) {
+  return (
+    <li className="list-group-item p-1 mr-1">
+      {x} / {y}
+      <button
+        onClick={onDelete}
+        type="button"
+        class="close pl-2"
+        aria-label="Delete"
+      >
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </li>
+  );
+}
+
 class PointInput extends React.Component {
   state = {
     samples: [],
@@ -39,7 +55,11 @@ class PointInput extends React.Component {
   };
 
   handleSubmit = () => {
-    if (this.props.onSubmit) this.props.onSubmit(this.state.statistic);
+    const { samples } = this.state;
+
+    if (samples.length !== 0) {
+      this.props.onSubmit && this.props.onSubmit(samples);
+    }
   };
 
   deleteRow = index => {
@@ -55,10 +75,6 @@ class PointInput extends React.Component {
       x: 0,
       y: 0,
     });
-  };
-
-  handleSubmit = () => {
-    this.props.onSubmit(this.state.samples);
   };
 
   handleResetClick = () => {
@@ -103,15 +119,15 @@ class PointInput extends React.Component {
           </Col>
         </Row>
         <Row>
-          <Col className="col mb-2">
+          <Col className="col mb-2 mt-1">
             <ul className="list-group list-group-horizontal-sm flex-wrap">
               {this.state.samples.map(([x, y], i) => (
-                <li className="list-group-item p-1" key={i}>
-                  <button>
-                    {x} / {y}
-                  </button>
-                  <button onClick={e => this.deleteRow(i)}>&times;</button>
-                </li>
+                <PointItem
+                  key={i}
+                  x={x}
+                  y={y}
+                  onDelete={() => this.deleteRow(i)}
+                />
               ))}
             </ul>
           </Col>

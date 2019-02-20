@@ -36,7 +36,7 @@ class StatisticView extends React.Component {
               <Col className="col-9">
                 <StatisticChart
                   regressionLineData={statistic.regressionLine}
-                  scatterData={statistic.samples}
+                  scatterData={statistic.raw.map(([x, y]) => ({ x, y }))}
                 />
               </Col>{' '}
             </>
