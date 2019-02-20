@@ -21,7 +21,7 @@ class StatisticView extends React.Component {
 
     return (
       <Container fluid className="mt-2">
-        <Row className="align-items-center">
+        <Row>
           {statistic ? (
             <>
               <Col className="col-3">
