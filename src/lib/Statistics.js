@@ -162,12 +162,26 @@ export default class Statistics {
    * @param {Array} y
    * @returns {Statistics}
    */
-  static createFromTable(matrix, x, y) {
+  /* static createFromTable(matrix, x, y) {
     let result = [];
     for (let i = 0; i < matrix.length; i++) {
       for (let j = 0; j < matrix[i].length; j++) {
         const occurrence = matrix[i][j];
-        result = [...result, new Array(occurrence).fill([x[i], [y[j]]])];
+        if(occurrence && occurrence !== 0) {
+          result = [...result, ...new Array(occurrence).fill([x[i], y[j]])];
+        }
+      }
+    }
+    return new Statistics(result);
+  } */
+
+  static createFromTable(matrix, x, y) {
+    const result = [];
+    for (let i = 0; i < y.length; i++) {
+      for (let j = 0; j < x.length; j++) {
+        for (let count = 0; count < matrix[i][j]; count++) {
+          result.push([x[j], y[i]]);
+        }
       }
     }
     return new Statistics(result);

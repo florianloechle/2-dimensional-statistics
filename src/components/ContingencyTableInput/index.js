@@ -249,9 +249,13 @@ export default class ContingencyTable extends React.Component {
   };
 
   reset = () => {
-    this.setState({
-      ...this.setUpInitalState(),
-    });
+    document.querySelectorAll('input').forEach(i => (i.value = 0));
+    this.setState(
+      {
+        ...this.setUpInitalState(),
+      },
+      () => this.props.onReset()
+    );
   };
 
   calculateGraph = () => {

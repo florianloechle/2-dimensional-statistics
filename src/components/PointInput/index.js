@@ -57,7 +57,7 @@ class PointInput extends React.Component {
   handleSubmit = () => {
     const { samples } = this.state;
 
-    if (samples.length !== 0) {
+    if (samples.length !== 0 && samples.length <= 100) {
       this.props.onSubmit && this.props.onSubmit(samples);
     }
   };
@@ -97,6 +97,7 @@ class PointInput extends React.Component {
               <input
                 type="number"
                 id="x"
+                style={{ minWidth: '65px' }}
                 className="form-control"
                 value={this.state.x}
                 onChange={this.handlePointInputChange}
@@ -105,6 +106,7 @@ class PointInput extends React.Component {
               <input
                 type="number"
                 id="y"
+                style={{ minWidth: '65px' }}
                 className="form-control"
                 value={this.state.y}
                 onChange={this.handlePointInputChange}

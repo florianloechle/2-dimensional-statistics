@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-const toFixedFive = value => Number(value.toString()).toFixed(5);
+const toFixedFive = value => Number(value.toFixed(6));
 
 class StatisticDetails extends React.Component {
   render() {

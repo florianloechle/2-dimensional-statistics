@@ -91,7 +91,7 @@ describe('The Statistics class', () => {
     });
 
     it('creates a new Statistic object with the factory function', () => {
-      const matrix = [[1, 2]];
+      const matrix = [[1, 2], [0, 0]];
       const x = [1, 2];
       const y = [0.5, 1];
       let stats = null;
