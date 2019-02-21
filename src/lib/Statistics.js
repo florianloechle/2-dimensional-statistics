@@ -106,10 +106,9 @@ export default class Statistics {
   }
 
   /**
-   * Returns the points of the regression line as objects
-   * with x and y properties.
+   * Returns an object with the properties points of the regression line, m, b and the quality.
    * @property
-   * @returns {Array}
+   * @returns {Object}
    */
   get regressionLine() {
     return this._memoize('regressionLine', () => {
