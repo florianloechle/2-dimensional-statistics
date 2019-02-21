@@ -347,7 +347,7 @@ export default class ContingencyTable extends React.Component {
           >
             Reset
           </button>
-          {this.state.sum > 0 &&
+          {this.state.sum >= 2 &&
           !this.state.overMaxSumError &&
           !this.state.uniquePointError ? (
             <button
