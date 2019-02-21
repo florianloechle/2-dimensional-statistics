@@ -6,6 +6,8 @@ import { Container, Row, Col } from '../Grid';
 import styles from './ContingencyTable.module.css';
 import { parseNumber, evaluateTable } from '../../lib/utils';
 
+var tabIndex = 0;
+
 const TableCell = ({ type = 'td', ...rest }) =>
   React.createElement(type, { ...rest });
 
@@ -135,6 +137,7 @@ export default class ContingencyTable extends React.Component {
               defaultValue={value}
               onChange={e => this.handleHeaderValueChange(e, 'x', i)}
               type="text"
+              TABINDEX={(tabIndex += 1)}
             />
           </TableCell>
         ))}
@@ -157,6 +160,7 @@ export default class ContingencyTable extends React.Component {
           defaultValue={v}
           onChange={e => this.handleHeaderValueChange(e, 'y', i)}
           type="text"
+          TABINDEX={(tabIndex += 1)}
         />
       </TableCell>
     ));
@@ -182,6 +186,7 @@ export default class ContingencyTable extends React.Component {
                 className={rowErrors.includes(valueIndex) ? styles.error : null}
                 placeholder="Wert.."
                 type="text"
+                TABINDEX={(tabIndex += 1)}
                 defaultValue={value}
                 onChange={e =>
                   this.handleDataValueChange(e, rowIndex, valueIndex)
