@@ -140,7 +140,7 @@ export default class ContingencyTable extends React.Component {
               onChange={e => this.handleHeaderValueChange(e, 'x', i)}
               type="text"
               onFocus={this.handleFocus}
-              TABINDEX={(tabIndex += 1)}
+              tabIndex={(tabIndex += 1)}
             />
           </TableCell>
         ))}
@@ -164,7 +164,7 @@ export default class ContingencyTable extends React.Component {
           onChange={e => this.handleHeaderValueChange(e, 'y', i)}
           type="text"
           onFocus={this.handleFocus}
-          TABINDEX={(tabIndex += 1)}
+          tabIndex={(tabIndex += 1)}
         />
       </TableCell>
     ));
@@ -190,7 +190,7 @@ export default class ContingencyTable extends React.Component {
                 className={rowErrors.includes(valueIndex) ? styles.error : null}
                 placeholder="Wert.."
                 type="text"
-                TABINDEX={(tabIndex += 1)}
+                tabIndex={(tabIndex += 1)}
                 onFocus={this.handleFocus}
                 defaultValue={value}
                 onChange={e =>
@@ -258,7 +258,7 @@ export default class ContingencyTable extends React.Component {
     }
   };
 
-  reset = () => {
+  handleResetClick = () => {
     document.querySelectorAll('input').forEach(i => (i.value = 0));
     this.setState(
       {
@@ -268,7 +268,7 @@ export default class ContingencyTable extends React.Component {
     );
   };
 
-  calculateGraph = () => {
+  handleSubmit = () => {
     if (
       this.state.overMaxSumError === true ||
       this.state.uniquePointError === true
@@ -334,22 +334,33 @@ export default class ContingencyTable extends React.Component {
             </table>
           </Col>
         </Row>
-        <button type="button" className="btn btn-warning" onClick={this.reset}>
-          Reset
-        </button>
-        {this.state.sum > 0 &&
-        !this.state.overMaxSumError &&
-        !this.state.uniquePointError ? (
+
+        <div
+          className="btn-group"
+          role="toolbar"
+          aria-label="Toolbar with button groups"
+        >
           <button
-            type="submit"
-            className="btn btn-primary"
-            onClick={this.calculateGraph}
+            type="button"
+            className="btn btn-danger"
+            onClick={this.handleResetClick}
           >
-            Rechnen!
+            Reset
           </button>
-        ) : (
-          ''
-        )}
+          {this.state.sum > 0 &&
+          !this.state.overMaxSumError &&
+          !this.state.uniquePointError ? (
+            <button
+              type="submit"
+              className="btn btn-dark"
+              onClick={this.handleSubmit}
+            >
+              Rechnen!
+            </button>
+          ) : (
+            ''
+          )}
+        </div>
       </Container>
     );
   }
