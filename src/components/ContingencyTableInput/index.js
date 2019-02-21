@@ -125,6 +125,8 @@ export default class ContingencyTable extends React.Component {
     );
   }
 
+  handleFocus = event => event.target.select();
+
   createXRow() {
     const { x, xErrors } = this.state;
     return (
@@ -137,6 +139,7 @@ export default class ContingencyTable extends React.Component {
               defaultValue={value}
               onChange={e => this.handleHeaderValueChange(e, 'x', i)}
               type="text"
+              onFocus={this.handleFocus}
               TABINDEX={(tabIndex += 1)}
             />
           </TableCell>
@@ -160,6 +163,7 @@ export default class ContingencyTable extends React.Component {
           defaultValue={v}
           onChange={e => this.handleHeaderValueChange(e, 'y', i)}
           type="text"
+          onFocus={this.handleFocus}
           TABINDEX={(tabIndex += 1)}
         />
       </TableCell>
@@ -187,6 +191,7 @@ export default class ContingencyTable extends React.Component {
                 placeholder="Wert.."
                 type="text"
                 TABINDEX={(tabIndex += 1)}
+                onFocus={this.handleFocus}
                 defaultValue={value}
                 onChange={e =>
                   this.handleDataValueChange(e, rowIndex, valueIndex)

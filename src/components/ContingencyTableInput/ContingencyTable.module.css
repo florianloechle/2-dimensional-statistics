@@ -30,6 +30,10 @@ tr th:first-child {
   border-right: 2px solid black;
 }
 
+table input{
+  width: 100% !important;
+}
+
 .error {
   text-decoration: underline;
   text-decoration-color: red;
