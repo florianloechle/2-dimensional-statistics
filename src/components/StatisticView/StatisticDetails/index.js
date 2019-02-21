@@ -5,6 +5,21 @@ import React from 'react';
 const toFixedFive = value => Number(value.toFixed(5));
 
 class StatisticDetails extends React.Component {
+  renderQualityText(quality) {
+    switch (true) {
+      case quality >= 0.9:
+        return 'Hervorragende Qualität';
+      case quality < 0.9 && quality > 0.7:
+        return 'Gute Qualität';
+      case quality <= 0.7 && quality > 0.5:
+        return 'Mäßige Qualität (Abweichungen von bis zu 25% möglich)';
+      case quality <= 0.5:
+        return 'Modell nicht anwendbar';
+      default:
+        return 'Error';
+    }
+  }
+
   render() {
     const {
       mean,
@@ -65,7 +80,9 @@ class StatisticDetails extends React.Component {
             </div>
             <div>m: {toFixedFive(regression.m)}</div>
             <div>b: {toFixedFive(regression.b)}</div>
+            <br />
             <div>Qualität:{toFixedFive(regression.quality)}</div>
+            <div>{this.renderQualityText(toFixedFive(regression.quality))}</div>
           </li>
         </ul>
       </>
