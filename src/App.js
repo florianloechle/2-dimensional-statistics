@@ -8,8 +8,14 @@ import StatisticView from './components/StatisticView';
 
 import Statistic from './lib/Statistics';
 import styles from './App.module.css';
+import 'react-s-alert/dist/s-alert-default.css';
+import 'react-s-alert/dist/s-alert-css-effects/flip.css';
+import Alert from 'react-s-alert';
 import { CSSTransition } from 'react-transition-group';
 
+const maxPoints = 5;
+const minPoints = 2;
+const maxDifferentPoints = 3;
 /**
  * App component that hold the apps current state.
  */
@@ -60,7 +66,13 @@ class StatisticApp extends React.Component {
                 onReset={this.onReset}
               />
             ) : (
-              <PointInput onSubmit={this.handleData} onReset={this.onReset} />
+              <PointInput
+                onSubmit={this.handleData}
+                onReset={this.onReset}
+                maxPoints={maxPoints}
+                minPoints={minPoints}
+                maxDifferentPoints={maxDifferentPoints}
+              />
             )}
             <CSSTransition
               in={statistic !== null}
@@ -79,6 +91,15 @@ class StatisticApp extends React.Component {
             />
           </a>
         </footer>
+        <Alert
+          effect={'flip'}
+          position={'bottom'}
+          timeout={1500}
+          html={false}
+          stack={false}
+          offset={0}
+          beep={false}
+        />
       </div>
     );
   }

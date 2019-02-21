@@ -1,6 +1,7 @@
 /** @format */
 
 import React from 'react';
+import Alert from 'react-s-alert';
 import { Container, Col, Row } from '../Grid';
 import Controls from '../Controls';
 
@@ -25,8 +26,50 @@ class PointInput extends React.Component {
     samples: [],
     x: 0,
     y: 0,
-    editRow: null,
+    differentPointsCount: 0,
   };
+
+  getMsgTooManyPoints() {
+    return (
+      'Die maximale Anzahl von ' +
+      this.props.maxPoints +
+      ' Punkten wurde mit ' +
+      (this.state.samples.length - this.props.maxPoints) +
+      ' Punkt' +
+      (this.state.samples.length - this.props.maxPoints === 1 ? '' : 'en') +
+      ' überschritten.'
+    );
+  }
+
+  getMsgMaxPointsReached() {
+    return (
+      'Die maximale Anzahl von  ' +
+      this.props.maxPoints +
+      '  Punkten wurde erreicht.'
+    );
+  }
+
+  getMsgTooManyDifferentPoints() {
+    return (
+      'Die maximale Anzahl von ' +
+      this.props.maxDifferentPoints +
+      ' Punkten wurde mit ' +
+      (this.state.differentPointsCount - this.props.maxDifferentPoints) +
+      ' Punkt' +
+      (this.state.differentPointsCount - this.props.maxDifferentPoints === 1
+        ? ''
+        : 'en') +
+      ' überschritten.'
+    );
+  }
+
+  getMsgMaxDifferentPointsReached() {
+    return (
+      'Die maximale Anzahl von  ' +
+      this.props.maxDifferentPoints +
+      '  Punkten wurde erreicht.'
+    );
+  }
 
   handlePointInputOnBlur = ev => {
     if (ev.target.value.length === 0) this.setState({ [ev.target.id]: 0 });
@@ -57,24 +100,87 @@ class PointInput extends React.Component {
   handleSubmit = () => {
     const { samples } = this.state;
 
-    if (samples.length !== 0 && samples.length <= 100) {
+    if (
+      samples.length >= this.props.minPoints &&
+      samples.length <= this.props.maxPoints
+    )
       this.props.onSubmit && this.props.onSubmit(samples);
-    }
+    else
+      Alert.error(
+        'Die Anzahl der Punkte muss zwischen ' +
+          this.props.minPoints +
+          ' und ' +
+          this.props.maxPoints +
+          ' liegen.'
+      );
   };
 
   deleteRow = index => {
-    this.setState({
-      samples: this.state.samples.filter((el, i) => i !== index),
-    });
+    var row = this.state.samples.filter((el, i) => i == index);
+    this.setState(
+      {
+        samples: this.state.samples.filter((el, i) => i !== index),
+      },
+      () => {
+        if (this.state.samples.length == this.props.maxPoints)
+          Alert.success(this.getMsgMaxPointsReached());
+        else if (this.state.samples.length > this.props.maxPoints)
+          Alert.error(this.getMsgTooManyPoints(this.state.samples.length));
+
+        if (
+          this.state.samples.filter(
+            el => el[0] === row[0][0] && el[1] === row[0][1]
+          ).length == 0
+        )
+          this.setState(
+            { differentPointsCount: this.state.differentPointsCount - 1 },
+            () => {
+              if (
+                this.state.differentPointsCount == this.props.maxDifferentPoints
+              )
+                Alert.warning(this.getMsgMaxDifferentPointsReached());
+              if (
+                this.state.differentPointsCount > this.props.maxDifferentPoints
+              )
+                Alert.error(this.getMsgTooManyDifferentPoints());
+            }
+          );
+      }
+    );
   };
 
   onAddPoint = () => {
     const { x, y } = this.state;
-    this.setState({
-      samples: [...this.state.samples, [Number(x), Number(y)]],
-      x: 0,
-      y: 0,
-    });
+
+    this.setState(
+      {
+        samples: [...this.state.samples, [Number(x), Number(y)]],
+        x: 0,
+        y: 0,
+      },
+      () => {
+        if (this.state.samples.length > this.props.maxPoints)
+          Alert.error(this.getMsgTooManyPoints(this.state.samples.length));
+        if (this.state.samples.length == this.props.maxPoints)
+          Alert.warning(this.getMsgMaxPointsReached());
+        if (
+          this.state.samples.filter(el => el[0] == x && el[1] == y).length == 1
+        )
+          this.setState(
+            { differentPointsCount: this.state.differentPointsCount + 1 },
+            () => {
+              if (
+                this.state.differentPointsCount == this.props.maxDifferentPoints
+              )
+                Alert.warning(this.getMsgMaxDifferentPointsReached());
+              if (
+                this.state.differentPointsCount > this.props.maxDifferentPoints
+              )
+                Alert.error(this.getMsgTooManyDifferentPoints());
+            }
+          );
+      }
+    );
   };
 
   handleResetClick = () => {
