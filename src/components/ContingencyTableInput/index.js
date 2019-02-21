@@ -49,7 +49,9 @@ export default class ContingencyTable extends React.Component {
       rowTotal: new Array(initalRows).fill(0),
       errors: [],
       xErrors: [],
+      xUniqueError: false,
       yErrors: [],
+      yUniqueError: false,
       sum: 0,
       overMaxSumError: false,
       uniquePointError: false,
@@ -94,6 +96,10 @@ export default class ContingencyTable extends React.Component {
     });
   };
 
+  countUnique(array) {
+    return new Set(array).size;
+  }
+
   getValueErrors(row, index) {
     const oldError = this.state.errors.find(
       error => error[0] === row && error[1] === index
@@ -111,6 +117,14 @@ export default class ContingencyTable extends React.Component {
           ...totals,
           errors: newErrors,
           uniquePointError: uniquePoints > this.props.maxUniquePoints,
+          xUniqueError:
+            this.countUnique(this.state.x) !== this.state.x.length
+              ? true
+              : false,
+          yUniqueError:
+            this.countUnique(this.state.y) !== this.state.y.length
+              ? true
+              : false,
         };
       },
       () => {
@@ -254,6 +268,10 @@ export default class ContingencyTable extends React.Component {
       this.setState({
         [type + 'Errors']: errors,
         [type]: newHeader,
+        xUniqueError:
+          this.countUnique(this.state.x) !== this.state.x.length ? true : false,
+        yUniqueError:
+          this.countUnique(this.state.y) !== this.state.y.length ? true : false,
       });
     }
   };
@@ -271,7 +289,8 @@ export default class ContingencyTable extends React.Component {
   handleSubmit = () => {
     if (
       this.state.overMaxSumError === true ||
-      this.state.uniquePointError === true
+      this.state.uniquePointError === true ||
+      this.state.xUnique === true
     ) {
       this.setState({
         error: 'Bitte überprüfe deine Eingaben.',
@@ -291,6 +310,8 @@ export default class ContingencyTable extends React.Component {
       sum,
       overMaxSumError,
       uniquePointError,
+      xUniqueError,
+      yUniqueError,
       error,
     } = this.state;
 
@@ -347,9 +368,11 @@ export default class ContingencyTable extends React.Component {
           >
             Reset
           </button>
-          {this.state.sum >= 2 &&
-          !this.state.overMaxSumError &&
-          !this.state.uniquePointError ? (
+          {sum >= 2 &&
+          !overMaxSumError &&
+          !xUniqueError &&
+          !yUniqueError &&
+          !uniquePointError ? (
             <button
               type="submit"
               className="btn btn-dark"
