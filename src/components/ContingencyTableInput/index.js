@@ -301,7 +301,6 @@ export default class ContingencyTable extends React.Component {
 
   isValid = () => {
     const {
-      columnTotal,
       sum,
       overMaxSumError,
       uniquePointError,
