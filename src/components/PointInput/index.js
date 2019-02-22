@@ -12,7 +12,7 @@ function PointItem({ x, y, onDelete, onEdit }) {
       <button
         onClick={onDelete}
         type="button"
-        class="close pl-2"
+        className="close pl-2"
         aria-label="Delete"
       >
         <span aria-hidden="true">&times;</span>
@@ -66,14 +66,22 @@ class PointInput extends React.Component {
   };
 
   handleSubmit = () => {
-    const { samples } = this.state;
+    const { samples, differentPointsCount } = this.state;
 
     if (
       samples.length >= this.props.minPoints &&
-      samples.length <= this.props.maxPoints
-    )
+      samples.length <= this.props.maxPoints &&
+      differentPointsCount <= this.props.maxDifferentPoints
+    ) {
       this.props.onSubmit && this.props.onSubmit(samples);
-    else
+    } else if (differentPointsCount > this.props.maxDifferentPoints) {
+      this.props.onSubmit(false);
+      Alert.error(
+        'Maximal unterschiedliche Punkte erreicht: ' +
+          this.props.maxDifferentPoints
+      );
+    } else {
+      this.props.onSubmit(false);
       Alert.error(
         'Die Anzahl der Punkte muss zwischen ' +
           this.props.minPoints +
@@ -81,6 +89,7 @@ class PointInput extends React.Component {
           this.props.maxPoints +
           ' liegen.'
       );
+    }
   };
 
   handlePointAdd = () => {
@@ -103,13 +112,13 @@ class PointInput extends React.Component {
   };
 
   deleteRow = index => {
-    var row = this.state.samples.filter((el, i) => i == index);
+    var row = this.state.samples.filter((el, i) => i === index);
     this.setState(
       {
         samples: this.state.samples.filter((el, i) => i !== index),
       },
       () => {
-        if (this.state.samples.length == this.props.maxPoints)
+        if (this.state.samples.length === this.props.maxPoints)
           Alert.success(this.getMsgMaxPointsReached());
         else if (this.state.samples.length > this.props.maxPoints)
           Alert.error(this.getMsgTooManyPoints(this.state.samples.length));
@@ -117,13 +126,14 @@ class PointInput extends React.Component {
         if (
           this.state.samples.filter(
             el => el[0] === row[0][0] && el[1] === row[0][1]
-          ).length == 0
+          ).length === 0
         )
           this.setState(
             { differentPointsCount: this.state.differentPointsCount - 1 },
             () => {
               if (
-                this.state.differentPointsCount == this.props.maxDifferentPoints
+                this.state.differentPointsCount ===
+                this.props.maxDifferentPoints
               )
                 Alert.warning(this.getMsgMaxDifferentPointsReached());
               if (
@@ -148,16 +158,20 @@ class PointInput extends React.Component {
       () => {
         if (this.state.samples.length > this.props.maxPoints)
           Alert.error(this.getMsgTooManyPoints(this.state.samples.length));
-        if (this.state.samples.length == this.props.maxPoints)
+        if (this.state.samples.length === this.props.maxPoints)
           Alert.warning(this.getMsgMaxPointsReached());
         if (
-          this.state.samples.filter(el => el[0] == x && el[1] == y).length == 1
+          this.state.samples.filter(
+            el =>
+              el[0] === Number.parseFloat(x) && el[1] === Number.parseFloat(y)
+          ).length === 1
         )
           this.setState(
             { differentPointsCount: this.state.differentPointsCount + 1 },
             () => {
               if (
-                this.state.differentPointsCount == this.props.maxDifferentPoints
+                this.state.differentPointsCount ===
+                this.props.maxDifferentPoints
               )
                 Alert.warning(this.getMsgMaxDifferentPointsReached());
               if (

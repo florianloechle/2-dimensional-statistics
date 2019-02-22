@@ -6,7 +6,7 @@ import { Container, Row, Col } from '../Grid';
 import styles from './ContingencyTable.module.css';
 import { parseNumber, evaluateTable } from '../../lib/utils';
 
-var tabIndex = 0;
+let tabIndex = 0;
 
 const TableCell = ({ type = 'td', ...rest }) =>
   React.createElement(type, { ...rest });
@@ -314,6 +314,8 @@ export default class ContingencyTable extends React.Component {
       yUniqueError,
       error,
     } = this.state;
+
+    tabIndex = 0;
 
     return (
       <Container fluid>

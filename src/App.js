@@ -36,6 +36,10 @@ class StatisticApp extends React.Component {
       return this.setState({
         statistic: new Statistic(data),
       });
+    } else if (!data) {
+      return this.setState({
+        statistic: null,
+      });
     }
     const { matrix, x, y } = data;
 
