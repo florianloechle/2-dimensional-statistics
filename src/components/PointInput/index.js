@@ -29,6 +29,147 @@ class PointInput extends React.Component {
     differentPointsCount: 0,
   };
 
+  handlePointInputOnBlur = ev => {
+    if (ev.target.value.length === 0) this.setState({ [ev.target.id]: 0 });
+  };
+
+  handlePointInputChange = ev => {
+    var value = ev.target.value;
+    var negativeNumber = false;
+
+    if (value.startsWith('-')) {
+      negativeNumber = true;
+      value = value.substring(1);
+    }
+
+    if (value.length > 1) value = value.replace(/^0+/, '');
+
+    if (value.startsWith('.')) {
+      value = '0' + value;
+    }
+
+    if (negativeNumber) {
+      value = '-' + value;
+    }
+
+    this.setState({ [ev.target.id]: value });
+  };
+
+  handlePointOnFocus = ev => {
+    if (this.state[ev.target.id] === 0) this.setState({ [ev.target.id]: '' });
+  };
+
+  handlePointOnKeyDown = ev => {
+    if (ev.keyCode === 13) {
+      this.handlePointAdd();
+    }
+  };
+
+  handleSubmit = () => {
+    const { samples } = this.state;
+
+    if (
+      samples.length >= this.props.minPoints &&
+      samples.length <= this.props.maxPoints
+    )
+      this.props.onSubmit && this.props.onSubmit(samples);
+    else
+      Alert.error(
+        'Die Anzahl der Punkte muss zwischen ' +
+          this.props.minPoints +
+          ' und ' +
+          this.props.maxPoints +
+          ' liegen.'
+      );
+  };
+
+  handlePointAdd = () => {
+    this.addPoint();
+    if (this.xInput) {
+      this.xInput.focus();
+      this.setState({ x: '' });
+    }
+  };
+
+  handleResetClick = () => {
+    this.setState(
+      {
+        samples: [],
+        x: 0,
+        y: 0,
+      },
+      () => this.props.onReset && this.props.onReset()
+    );
+  };
+
+  deleteRow = index => {
+    var row = this.state.samples.filter((el, i) => i == index);
+    this.setState(
+      {
+        samples: this.state.samples.filter((el, i) => i !== index),
+      },
+      () => {
+        if (this.state.samples.length == this.props.maxPoints)
+          Alert.success(this.getMsgMaxPointsReached());
+        else if (this.state.samples.length > this.props.maxPoints)
+          Alert.error(this.getMsgTooManyPoints(this.state.samples.length));
+
+        if (
+          this.state.samples.filter(
+            el => el[0] === row[0][0] && el[1] === row[0][1]
+          ).length == 0
+        )
+          this.setState(
+            { differentPointsCount: this.state.differentPointsCount - 1 },
+            () => {
+              if (
+                this.state.differentPointsCount == this.props.maxDifferentPoints
+              )
+                Alert.warning(this.getMsgMaxDifferentPointsReached());
+              if (
+                this.state.differentPointsCount > this.props.maxDifferentPoints
+              )
+                Alert.error(this.getMsgTooManyDifferentPoints());
+            }
+          );
+      }
+    );
+  };
+
+  addPoint = () => {
+    const { x, y } = this.state;
+
+    this.setState(
+      {
+        samples: [...this.state.samples, [Number(x), Number(y)]],
+        x: 0,
+        y: 0,
+      },
+      () => {
+        if (this.state.samples.length > this.props.maxPoints)
+          Alert.error(this.getMsgTooManyPoints(this.state.samples.length));
+        if (this.state.samples.length == this.props.maxPoints)
+          Alert.warning(this.getMsgMaxPointsReached());
+        if (
+          this.state.samples.filter(el => el[0] == x && el[1] == y).length == 1
+        )
+          this.setState(
+            { differentPointsCount: this.state.differentPointsCount + 1 },
+            () => {
+              if (
+                this.state.differentPointsCount == this.props.maxDifferentPoints
+              )
+                Alert.warning(this.getMsgMaxDifferentPointsReached());
+              if (
+                this.state.differentPointsCount > this.props.maxDifferentPoints
+              )
+                Alert.error(this.getMsgTooManyDifferentPoints());
+            }
+          );
+      }
+    );
+  };
+
   getMsgTooManyPoints() {
     return (
       'Die maximale Anzahl von ' +
@@ -71,129 +212,6 @@ class PointInput extends React.Component {
     );
   }
 
-  handlePointInputOnBlur = ev => {
-    if (ev.target.value.length === 0) this.setState({ [ev.target.id]: 0 });
-  };
-
-  handlePointInputChange = ev => {
-    var value = ev.target.value;
-    var negativeNumber = false;
-
-    if (value.startsWith('-')) {
-      negativeNumber = true;
-      value = value.substring(1);
-    }
-
-    if (value.length > 1) value = value.replace(/^0+/, '');
-
-    if (value.startsWith('.')) {
-      value = '0' + value;
-    }
-
-    if (negativeNumber) {
-      value = '-' + value;
-    }
-
-    this.setState({ [ev.target.id]: value });
-  };
-
-  handleSubmit = () => {
-    const { samples } = this.state;
-
-    if (
-      samples.length >= this.props.minPoints &&
-      samples.length <= this.props.maxPoints
-    )
-      this.props.onSubmit && this.props.onSubmit(samples);
-    else
-      Alert.error(
-        'Die Anzahl der Punkte muss zwischen ' +
-          this.props.minPoints +
-          ' und ' +
-          this.props.maxPoints +
-          ' liegen.'
-      );
-  };
-
-  deleteRow = index => {
-    var row = this.state.samples.filter((el, i) => i == index);
-    this.setState(
-      {
-        samples: this.state.samples.filter((el, i) => i !== index),
-      },
-      () => {
-        if (this.state.samples.length == this.props.maxPoints)
-          Alert.success(this.getMsgMaxPointsReached());
-        else if (this.state.samples.length > this.props.maxPoints)
-          Alert.error(this.getMsgTooManyPoints(this.state.samples.length));
-
-        if (
-          this.state.samples.filter(
-            el => el[0] === row[0][0] && el[1] === row[0][1]
-          ).length == 0
-        )
-          this.setState(
-            { differentPointsCount: this.state.differentPointsCount - 1 },
-            () => {
-              if (
-                this.state.differentPointsCount == this.props.maxDifferentPoints
-              )
-                Alert.warning(this.getMsgMaxDifferentPointsReached());
-              if (
-                this.state.differentPointsCount > this.props.maxDifferentPoints
-              )
-                Alert.error(this.getMsgTooManyDifferentPoints());
-            }
-          );
-      }
-    );
-  };
-
-  onAddPoint = () => {
-    const { x, y } = this.state;
-
-    this.setState(
-      {
-        samples: [...this.state.samples, [Number(x), Number(y)]],
-        x: 0,
-        y: 0,
-      },
-      () => {
-        if (this.state.samples.length > this.props.maxPoints)
-          Alert.error(this.getMsgTooManyPoints(this.state.samples.length));
-        if (this.state.samples.length == this.props.maxPoints)
-          Alert.warning(this.getMsgMaxPointsReached());
-        if (
-          this.state.samples.filter(el => el[0] == x && el[1] == y).length == 1
-        )
-          this.setState(
-            { differentPointsCount: this.state.differentPointsCount + 1 },
-            () => {
-              if (
-                this.state.differentPointsCount == this.props.maxDifferentPoints
-              )
-                Alert.warning(this.getMsgMaxDifferentPointsReached());
-              if (
-                this.state.differentPointsCount > this.props.maxDifferentPoints
-              )
-                Alert.error(this.getMsgTooManyDifferentPoints());
-            }
-          );
-      }
-    );
-  };
-
-  handleResetClick = () => {
-    this.setState(
-      {
-        samples: [],
-        x: 0,
-        y: 0,
-      },
-      () => this.props.onReset && this.props.onReset()
-    );
-  };
-
   render() {
     return (
       <Container fluid>
@@ -206,8 +224,11 @@ class PointInput extends React.Component {
                 style={{ minWidth: '65px' }}
                 className="form-control"
                 value={this.state.x}
+                ref={el => (this.xInput = el)}
                 onChange={this.handlePointInputChange}
                 onBlur={this.handlePointInputOnBlur}
+                onFocus={this.handlePointOnFocus}
+                onKeyDown={this.handlePointOnKeyDown}
               />
               <input
                 type="number"
@@ -217,9 +238,14 @@ class PointInput extends React.Component {
                 value={this.state.y}
                 onChange={this.handlePointInputChange}
                 onBlur={this.handlePointInputOnBlur}
+                onFocus={this.handlePointOnFocus}
+                onKeyDown={this.handlePointOnKeyDown}
               />
               <div className="input-group-append">
-                <button className="input-group-text" onClick={this.onAddPoint}>
+                <button
+                  className="input-group-text"
+                  onClick={this.handlePointAdd}
+                >
                   Hinzufügen
                 </button>
               </div>
