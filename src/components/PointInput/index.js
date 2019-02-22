@@ -98,14 +98,21 @@ class PointInput extends React.Component {
   };
 
   handleSubmit = () => {
-    const { samples } = this.state;
+    const { samples, differentPointsCount } = this.state;
 
     if (
       samples.length >= this.props.minPoints &&
-      samples.length <= this.props.maxPoints
-    )
+      samples.length <= this.props.maxPoints &&
+      differentPointsCount <= this.props.maxDifferentPoints
+    ) {
       this.props.onSubmit && this.props.onSubmit(samples);
-    else
+    } else if (differentPointsCount > this.props.maxDifferentPoints) {
+      this.props.onSubmit(false);
+      Alert.error(
+        'Maximal unterschiedliche Punkte erreicht: ' +
+          this.props.maxDifferentPoints
+      );
+    } else {
       Alert.error(
         'Die Anzahl der Punkte muss zwischen ' +
           this.props.minPoints +
@@ -113,6 +120,7 @@ class PointInput extends React.Component {
           this.props.maxPoints +
           ' liegen.'
       );
+    }
   };
 
   deleteRow = index => {

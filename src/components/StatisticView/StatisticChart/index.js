@@ -11,7 +11,7 @@ const getData = (lineData, scatterData) => {
         type: 'scatter',
         label: 'Verteilung',
         fill: false,
-        backgroundColor: 'white',
+        backgroundColor: 'red',
         pointBorderColor: 'black',
         pointBackgroundColor: 'red',
         pointBorderWidth: 2,
