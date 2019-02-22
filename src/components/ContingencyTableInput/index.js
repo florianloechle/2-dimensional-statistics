@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import { Container, Row, Col } from '../Grid';
 import styles from './ContingencyTable.module.css';
 import { parseNumber, evaluateTable } from '../../lib/utils';
+import Alert from 'react-s-alert';
 
 let tabIndex = 0;
 
@@ -58,6 +59,17 @@ export default class ContingencyTable extends React.Component {
     };
   }
 
+  handleErrorMsg = () => {
+    if (this.state.overMaxSumError) {
+      Alert.error('Maximale Anzahl an Punkten erreicht: ' + this.props.maxSum);
+    } else if (this.state.uniquePointError) {
+      Alert.error(
+        'Maximale Anzahl an unterschiedlichen Punkten erreicht: ' +
+          this.props.maxUniquePoints
+      );
+    }
+  };
+
   addRow = () => {
     this.setState(state => {
       return {
@@ -68,30 +80,12 @@ export default class ContingencyTable extends React.Component {
     });
   };
 
-  removeRow = () => {
-    this.setState(state => {
-      return {
-        y: state.y.slice(-1),
-        rows: state.rows.map(row => row.slice(-1)),
-      };
-    });
-  };
-
   addColumn = () => {
     this.setState(state => {
       return {
         x: [...state.x, 0],
         rows: state.rows.map(row => [...row, 0]),
         columnTotal: [...state.columnTotal, 0],
-      };
-    });
-  };
-
-  removeColumn = () => {
-    this.setState(state => {
-      return {
-        x: state.x.slice(-1),
-        rows: state.rows.map(row => row.slice(-1)),
       };
     });
   };
@@ -128,6 +122,7 @@ export default class ContingencyTable extends React.Component {
         };
       },
       () => {
+        this.handleErrorMsg();
         this.props.onDataChange &&
           this.props.onDataChange({
             // should this return the table parsed as an array?
@@ -304,14 +299,36 @@ export default class ContingencyTable extends React.Component {
     }
   };
 
+  isValid = () => {
+    const {
+      sum,
+      overMaxSumError,
+      uniquePointError,
+      xUniqueError,
+      yUniqueError,
+      errors,
+      xErrors,
+      yErrors,
+    } = this.state;
+
+    return (
+      sum >= 2 &&
+      !overMaxSumError &&
+      !xUniqueError &&
+      !yUniqueError &&
+      !uniquePointError &&
+      errors.length === 0 &&
+      xErrors.length === 0 &&
+      yErrors.length === 0
+    );
+  };
+
   render() {
     const {
       columnTotal,
       sum,
       overMaxSumError,
       uniquePointError,
-      xUniqueError,
-      yUniqueError,
       error,
     } = this.state;
 
@@ -370,11 +387,7 @@ export default class ContingencyTable extends React.Component {
           >
             Reset
           </button>
-          {sum >= 2 &&
-          !overMaxSumError &&
-          !xUniqueError &&
-          !yUniqueError &&
-          !uniquePointError ? (
+          {this.isValid() ? (
             <button
               type="submit"
               className="btn btn-dark"

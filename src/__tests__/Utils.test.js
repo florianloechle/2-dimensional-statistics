@@ -35,6 +35,7 @@ describe('Utils', () => {
       expect(result).toHaveProperty('columnTotal');
       expect(result).toHaveProperty('rowTotal');
       expect(result).toHaveProperty('sum');
+      expect(result).toHaveProperty('uniquePoints');
     });
 
     it('evaluats a table correctly and returns the correct values', () => {
@@ -42,6 +43,7 @@ describe('Utils', () => {
         columnTotal: [4, 2, 5, 3],
         rowTotal: [4, 5, 5],
         sum: 14,
+        uniquePoints: 11,
       });
     });
   });
