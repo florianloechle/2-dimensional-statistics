@@ -13,9 +13,9 @@ import 'react-s-alert/dist/s-alert-css-effects/flip.css';
 import Alert from 'react-s-alert';
 import { CSSTransition } from 'react-transition-group';
 
-const maxPoints = 5;
+const maxPoints = 100;
 const minPoints = 2;
-const maxDifferentPoints = 3;
+const maxDifferentPoints = 30;
 /**
  * App component that hold the apps current state.
  */

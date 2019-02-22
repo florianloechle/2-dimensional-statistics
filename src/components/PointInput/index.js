@@ -23,31 +23,44 @@ function PointItem({ x, y, onDelete, onEdit }) {
 
 class PointInput extends React.Component {
   state = {
+    // Stores all inputed points
     samples: [],
+    // Stores value of xInput
     x: 0,
+    // Stores value of yInput
     y: 0,
+    // Counts number of differnt points
     differentPointsCount: 0,
   };
 
+  // Sets Value to 0 when it's empty
   handlePointInputOnBlur = ev => {
     if (ev.target.value.length === 0) this.setState({ [ev.target.id]: 0 });
   };
 
+  // Formats number on input
   handlePointInputChange = ev => {
     var value = ev.target.value;
     var negativeNumber = false;
 
+    // Saves and removes sign for formatting
     if (value.startsWith('-')) {
       negativeNumber = true;
       value = value.substring(1);
     }
 
+    // Removes 0 from double 00
+    if (value === '00') value = '0';
+
+    // Clears forwarding zeros
     if (value.length > 1) value = value.replace(/^0+/, '');
 
+    // Adds zero again if the number is a point number
     if (value.startsWith('.')) {
       value = '0' + value;
     }
 
+    // Adds negative sign again
     if (negativeNumber) {
       value = '-' + value;
     }
@@ -55,16 +68,32 @@ class PointInput extends React.Component {
     this.setState({ [ev.target.id]: value });
   };
 
+  // Clears input to improve usabilty
   handlePointOnFocus = ev => {
     if (this.state[ev.target.id] === 0) this.setState({ [ev.target.id]: '' });
   };
 
+  // Handles 'Return' to improve usabilty
   handlePointOnKeyDown = ev => {
     if (ev.keyCode === 13) {
-      this.handlePointAdd();
+      // Jump from xInput to yInput
+      if (ev.target.id === 'x') {
+        if (this.yInput) {
+          this.yInput.focus();
+          this.setState({ y: '' });
+        }
+        // Adds point
+      } else if (ev.target.id === 'y') {
+        if (this.state.y === '')
+          this.setState({ y: 0 }, () => {
+            this.handlePointAdd();
+          });
+        else this.handlePointAdd();
+      }
     }
   };
 
+  // Verifys list of points and runs the calculation and the display
   handleSubmit = () => {
     const { samples, differentPointsCount } = this.state;
 
@@ -92,6 +121,7 @@ class PointInput extends React.Component {
     }
   };
 
+  // Adds a point to the list and sets the focus on xInput
   handlePointAdd = () => {
     this.addPoint();
     if (this.xInput) {
@@ -100,37 +130,51 @@ class PointInput extends React.Component {
     }
   };
 
+  // Clears the state
   handleResetClick = () => {
     this.setState(
       {
         samples: [],
         x: 0,
         y: 0,
+        differentPointsCount: 0,
       },
       () => this.props.onReset && this.props.onReset()
     );
+    if (this.xInput) {
+      this.xInput.focus();
+      this.setState({ x: '' });
+    }
   };
 
+  // Deletes a row from the list and updates the state
   deleteRow = index => {
+    // Saves values from the row to delete
     var row = this.state.samples.filter((el, i) => i === index);
+
+    // Deletes row
     this.setState(
       {
         samples: this.state.samples.filter((el, i) => i !== index),
       },
       () => {
+        // Sends status of list to user
         if (this.state.samples.length === this.props.maxPoints)
           Alert.success(this.getMsgMaxPointsReached());
         else if (this.state.samples.length > this.props.maxPoints)
           Alert.error(this.getMsgTooManyPoints(this.state.samples.length));
 
+        // Checks if there is another point with the same x and y values
         if (
           this.state.samples.filter(
             el => el[0] === row[0][0] && el[1] === row[0][1]
           ).length === 0
         )
+          // Decreases differentPointsCount when it was the last point of this shaping
           this.setState(
             { differentPointsCount: this.state.differentPointsCount - 1 },
             () => {
+              // Sends status of list to user
               if (
                 this.state.differentPointsCount ===
                 this.props.maxDifferentPoints
@@ -146,6 +190,7 @@ class PointInput extends React.Component {
     );
   };
 
+  // Adds a point to the list
   addPoint = () => {
     const { x, y } = this.state;
 
@@ -156,19 +201,23 @@ class PointInput extends React.Component {
         y: 0,
       },
       () => {
+        // Sends status of list to user
         if (this.state.samples.length > this.props.maxPoints)
           Alert.error(this.getMsgTooManyPoints(this.state.samples.length));
         if (this.state.samples.length === this.props.maxPoints)
           Alert.warning(this.getMsgMaxPointsReached());
+        // Checks if the point was the first point of the shaping
         if (
           this.state.samples.filter(
             el =>
               el[0] === Number.parseFloat(x) && el[1] === Number.parseFloat(y)
           ).length === 1
         )
+          // Incereases differentPointsCount when it was the first point of this shaping
           this.setState(
             { differentPointsCount: this.state.differentPointsCount + 1 },
             () => {
+              // Sends status of list to user
               if (
                 this.state.differentPointsCount ===
                 this.props.maxDifferentPoints
@@ -184,6 +233,7 @@ class PointInput extends React.Component {
     );
   };
 
+  // Usermessages
   getMsgTooManyPoints() {
     return (
       'Die maximale Anzahl von ' +
@@ -208,7 +258,7 @@ class PointInput extends React.Component {
     return (
       'Die maximale Anzahl von ' +
       this.props.maxDifferentPoints +
-      ' Punkten wurde mit ' +
+      ' verschiedenen Punkten wurde mit ' +
       (this.state.differentPointsCount - this.props.maxDifferentPoints) +
       ' Punkt' +
       (this.state.differentPointsCount - this.props.maxDifferentPoints === 1
@@ -222,10 +272,11 @@ class PointInput extends React.Component {
     return (
       'Die maximale Anzahl von  ' +
       this.props.maxDifferentPoints +
-      '  Punkten wurde erreicht.'
+      ' verschiedenen Punkten wurde erreicht.'
     );
   }
 
+  // View
   render() {
     return (
       <Container fluid>
@@ -250,6 +301,7 @@ class PointInput extends React.Component {
                 style={{ minWidth: '65px' }}
                 className="form-control"
                 value={this.state.y}
+                ref={el => (this.yInput = el)}
                 onChange={this.handlePointInputChange}
                 onBlur={this.handlePointInputOnBlur}
                 onFocus={this.handlePointOnFocus}
